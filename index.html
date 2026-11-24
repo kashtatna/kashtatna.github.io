@@ -1,0 +1,2213 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>أغراض الكشتة</title>
+<meta name="description" content="منو راح اييب شنو، وكل واحد يأشر على أغراضه.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="icon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#F2F4EE" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#111614" media="(prefers-color-scheme: dark)">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="الكشتة">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="أغراض الكشتة">
+<meta property="og:title" content="أغراض الكشتة">
+<meta property="og:description" content="منو راح اييب شنو، وكل واحد يأشر على أغراضه.">
+<meta property="og:url" content="https://kashtatna.github.io/">
+<meta property="og:image" content="https://kashtatna.github.io/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ar_KW">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* Layout idea: one phone-width column. A sticky strip keeps the count and the
+     two controls in reach; the meals block asks who is buying what, then the
+     gear sections follow as flat ruled lists, like a field notebook. */
+  :root {
+    --bg: #F2F4EE;
+    --surface: #FFFFFF;
+    --ink: #1B2420;
+    --muted: #65706A;
+    --line: #DCE1D7;
+    --accent: #0E6B5B;
+    --on-accent: #FFFFFF;
+    --accent-soft: #DCEEE8;
+    --font-display: "IBM Plex Sans Arabic", "Geeza Pro", "Segoe UI", Tahoma, sans-serif;
+    --font-body: "IBM Plex Sans Arabic", "Geeza Pro", "Segoe UI", Tahoma, sans-serif;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #111614;
+      --surface: #1A211E;
+      --ink: #E7ECE6;
+      --muted: #95A099;
+      --line: #2A3430;
+      --accent: #4CC2A6;
+      --on-accent: #0B1512; --accent-soft: #1C3A33;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #111614;
+    --surface: #1A211E;
+    --ink: #E7ECE6;
+    --muted: #95A099;
+    --line: #2A3430;
+    --accent: #4CC2A6;
+    --on-accent: #0B1512; --accent-soft: #1C3A33;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.6;
+  }
+  .page {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 0 16px 56px;
+  }
+
+  header { padding: 28px 0 12px; }
+  h1 {
+    margin: 0 0 6px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 32px;
+    line-height: 1.3;
+    text-wrap: balance;
+  }
+  .lede { margin: 0; color: var(--muted); font-size: 15px; }
+
+  /* Sticky strip: count, bar, controls */
+  .strip {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    margin: 0 -16px;
+    padding: 12px 16px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .count {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    font-weight: 600;
+  }
+  .count .left { color: var(--muted); font-weight: 400; font-size: 15px; }
+  .num { font-variant-numeric: tabular-nums; }
+  .bar {
+    height: 8px;
+    border-radius: 4px;
+    background: var(--line);
+    overflow: hidden;
+  }
+  .bar > span {
+    display: block;
+    height: 100%;
+    width: 0;
+    border-radius: 4px;
+    background: var(--accent);
+    transition: width .25s ease;
+  }
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; }
+  button {
+    font: inherit;
+    font-size: 15px;
+    font-weight: 500;
+    min-height: 42px;
+    padding: 6px 14px;
+    border-radius: 10px;
+    border: 1.5px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    cursor: pointer;
+    flex: 1 1 140px;
+  }
+  button[aria-pressed="true"] {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--on-accent);
+  }
+  button.armed { border-color: var(--ink); font-weight: 600; }
+  button:focus-visible,
+  input:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* Sections */
+  main { display: flex; flex-direction: column; gap: 26px; padding-top: 22px; }
+  .head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 21px;
+    line-height: 1.4;
+  }
+  h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  .note { margin: 0 0 10px; color: var(--muted); font-size: 15px; }
+  .pill {
+    flex: none;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 1px 10px;
+    border-radius: 999px;
+    border: 1.5px solid var(--line);
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .pill.done {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--on-accent);
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  li + li { border-top: 1px solid var(--line); }
+  label {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 54px;
+    padding: 10px 14px;
+    cursor: pointer;
+  }
+  input[type="checkbox"] {
+    -webkit-appearance: none;
+    appearance: none;
+    flex: none;
+    width: 26px;
+    height: 26px;
+    margin: 0;
+    border: 2px solid var(--muted);
+    border-radius: 7px;
+    background: transparent;
+    display: grid;
+    place-content: center;
+    cursor: pointer;
+  }
+  input[type="checkbox"]:checked {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  input[type="checkbox"]:checked::after {
+    content: "";
+    width: 7px;
+    height: 13px;
+    border: solid var(--on-accent);
+    border-width: 0 3px 3px 0;
+    transform: translateY(-2px) rotate(45deg);
+  }
+  input:checked + .txt {
+    color: var(--muted);
+    text-decoration: line-through;
+  }
+
+  /* Meals block */
+  .meals { display: flex; flex-direction: column; gap: 14px; }
+  .duty {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 14px;
+    background: var(--surface);
+    border: 1.5px solid var(--line);
+    border-radius: 14px;
+  }
+  .duty.on { border-color: var(--accent); }
+  .q {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    gap: 12px;
+  }
+  .q .q-text { flex: 1 1 auto; min-width: 0; }
+  .q .seg { flex: none; }
+  .q-text { font-weight: 600; }
+  .seg { display: flex; gap: 8px; }
+  .seg button { flex: 0 0 auto; min-width: 64px; padding: 6px 10px; }
+  .group { display: flex; flex-direction: column; gap: 8px; }
+  .group .head { margin-bottom: 0; }
+  .duty ul { background: var(--bg); }
+  .opts { display: flex; flex-direction: column; gap: 10px; padding-top: 4px; border-top: 1px solid var(--line); }
+  .opts .seg button { flex: 1 1 0; }
+
+  /* Custom items */
+  .custom-row { display: flex; align-items: center; }
+  .custom-row label { flex: 1 1 auto; min-width: 0; }
+  .custom-row .txt { overflow-wrap: anywhere; }
+  button.del {
+    flex: none;
+    min-height: 36px;
+    margin-inline-end: 10px;
+    padding: 4px 12px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .addform { display: flex; gap: 8px; margin-top: 10px; }
+  .addform input {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 46px;
+    padding: 0 12px;
+    font: inherit;
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    color: var(--ink);
+  }
+  .addform button { flex: none; min-width: 76px; }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 8px; margin-top: 14px; }
+  .tabs a {
+    flex: 1 1 0;
+    text-align: center;
+    padding: 9px 6px;
+    border-radius: 10px;
+    border: 1.5px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  .tabs a[aria-current="page"] {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--on-accent);
+  }
+  .tabs a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  #viewItems > .lede { margin-bottom: 4px; }
+
+  /* Calculator */
+  .calc { display: flex; flex-direction: column; gap: 16px; padding-top: 18px; }
+  .calc .note { margin: 4px 0 0; }
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 14px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+  }
+  .field { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .field + .field { border-top: 1px solid var(--line); padding-top: 12px; }
+  .fl { display: flex; flex-direction: column; min-width: 0; }
+  .flabel { font-weight: 600; }
+  .hint { color: var(--muted); font-size: 14px; }
+  .stepper { display: flex; align-items: center; gap: 6px; flex: none; }
+  .stepper button.step {
+    flex: none;
+    width: 44px;
+    min-height: 44px;
+    padding: 0;
+    font-size: 22px;
+    line-height: 1;
+  }
+  .stepper input {
+    width: 58px;
+    min-height: 44px;
+    text-align: center;
+    font: inherit;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    background: var(--bg);
+    color: var(--ink);
+    -moz-appearance: textfield;
+  }
+  .stepper input::-webkit-inner-spin-button,
+  .stepper input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+  .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .tile {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 14px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    color: var(--muted);
+    font-size: 15px;
+  }
+  .tile .big { color: var(--ink); font-size: 32px; font-weight: 600; line-height: 1.2; }
+  .mains { display: flex; flex-direction: column; }
+  .mrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 0; }
+  .mrow + .mrow { border-top: 1px solid var(--line); }
+  .res { width: 100%; border-collapse: collapse; }
+  .res th, .res td { padding: 10px 0; vertical-align: top; }
+  .res tr + tr th, .res tr + tr td { border-top: 1px solid var(--line); }
+  .res th { text-align: right; font-weight: 600; }
+  .res td { text-align: left; }
+  .res .val { display: block; font-weight: 600; font-size: 18px; font-variant-numeric: tabular-nums; }
+  .res .sub { display: block; color: var(--muted); font-size: 14px; }
+
+  .alldone {
+    margin: 0;
+    padding: 22px 16px;
+    text-align: center;
+    border: 1.5px dashed var(--accent);
+    border-radius: 12px;
+    font-weight: 600;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bar > span { transition: none; }
+  }
+
+  /* Group page */
+  .tabs .tab {
+    flex: 1 1 0;
+    min-height: 0;
+    text-align: center;
+    padding: 9px 6px;
+    border-radius: 10px;
+    border: 1.5px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  .tabs .tab[aria-current="page"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+  .namecard { margin-top: 18px; }
+  .namecard h2 { margin: 0; }
+  .namebar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 14px; font-size: 15px; }
+  button.small { flex: none; min-width: 64px; min-height: 36px; padding: 4px 12px; font-size: 14px; }
+  .q > button { flex: none; }
+  #viewItems > .lede { margin-top: 6px; }
+  .block { display: flex; flex-direction: column; gap: 14px; }
+  .block-head h2 { margin: 0; }
+  .block-head .note { margin: 2px 0 0; }
+  .rowtext { display: flex; flex-direction: column; min-width: 0; }
+  .row.done .txt { color: var(--muted); text-decoration: line-through; }
+  .who { font-size: 13.5px; color: var(--muted); line-height: 1.4; }
+  .who.has { color: var(--accent); font-weight: 600; }
+  .row.taken label { cursor: default; }
+  input[type="checkbox"]:disabled { opacity: .55; cursor: default; }
+  .seg.wrap { flex-wrap: wrap; }
+  .duty > .note { margin: -6px 0 0; }
+  .mine { gap: 10px; }
+  .mine .head { margin-bottom: 0; }
+  .mine .note { margin: 0; }
+  ul.chips { display: flex; flex-wrap: wrap; gap: 6px; background: none; border: 0; border-radius: 0; overflow: visible; }
+  ul.chips li {
+    padding: 3px 11px;
+    border-radius: 999px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  details.peek summary { cursor: pointer; color: var(--muted); font-size: 14px; }
+  ul.peek-list {
+    margin: 8px 0 0;
+    padding: 0;
+    padding-inline-start: 20px;
+    list-style: disc;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    overflow: visible;
+    color: var(--muted);
+    font-size: 15px;
+  }
+  ul.peek-list li + li { border-top: 0; }
+  #customForm { margin-top: 10px; }
+  .admin { margin-top: 28px; padding-top: 14px; border-top: 1px solid var(--line); color: var(--muted); font-size: 15px; }
+  .admin summary { cursor: pointer; font-weight: 600; color: var(--ink); }
+  .admin .note { margin: 8px 0 0; }
+  .admin .addform { margin-top: 10px; }
+  .toast {
+    position: fixed;
+    left: 16px;
+    right: 16px;
+    bottom: 18px;
+    max-width: 528px;
+    margin: 0 auto;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: var(--ink);
+    color: var(--bg);
+    font-size: 15px;
+    line-height: 1.5;
+    z-index: 20;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, .18);
+  }
+  .row.with-action { display: flex; align-items: center; }
+  .row.with-action label { flex: 1 1 auto; min-width: 0; }
+  button.skip {
+    flex: none;
+    min-height: 36px;
+    margin-inline-end: 10px;
+    padding: 4px 10px;
+    font-size: 13.5px;
+    color: var(--muted);
+  }
+  .row.skipped .txt { color: var(--muted); text-decoration: line-through; }
+  #mineBox { margin-top: 18px; }
+  .skipped-box { margin-top: 18px; }
+  .skipped-box summary { cursor: pointer; font-weight: 600; color: var(--muted); }
+  .skipped-box .note { margin: 8px 0 0; }
+  ul.skip-list { margin-top: 10px; }
+  .skip-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 48px; padding: 6px 14px; }
+  .skip-row .txt { color: var(--muted); min-width: 0; }
+  .skip-row button.skip { margin-inline-end: 0; }
+  ul.chips li.in { color: var(--muted); text-decoration: line-through; }
+  .pending { margin-top: 18px; gap: 8px; }
+  .pending h2 { margin: 0; }
+  .pending .note { margin: 0; }
+  ul.pending-list { display: flex; flex-direction: column; gap: 6px; background: none; border: 0; border-radius: 0; overflow: visible; }
+  ul.pending-list li + li { border-top: 0; }
+  ul.pending-list strong { font-weight: 600; }
+  .ideas { display: flex; flex-direction: column; gap: 6px; }
+  .ideas .note { margin: 0; font-size: 14px; }
+
+  /* Kashtas: this phone's list, making one, and the link to send */
+  .kby { margin: -4px 0 10px; color: var(--muted); font-size: 15px; }
+  button.topback { flex: none; display: inline-flex; align-items: center; gap: 6px; min-height: 36px; margin: -10px 0 10px; padding: 4px 14px 4px 12px; font-size: 14.5px; font-weight: 600; }
+  .kcard { margin-top: 14px; }
+  .kcard h2 { margin: 0; }
+  .kcard > .note { margin: 0; }
+  ul.klist { margin: 0; }
+  .krow { display: flex; align-items: center; gap: 8px; padding: 6px 8px 6px 10px; }
+  button.kopen {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1px;
+    text-align: start;
+    border: 0;
+    padding: 6px 2px;
+    background: none;
+  }
+  .kname { font-weight: 600; font-size: 16.5px; line-height: 1.4; }
+  .krow .kforget { flex: none; color: var(--muted); }
+  .stackform { display: flex; flex-direction: column; gap: 10px; }
+  .stackform input {
+    min-height: 46px;
+    padding: 0 12px;
+    font: inherit;
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    color: var(--ink);
+  }
+  .stackform .note { margin: -4px 0 0; font-size: 14px; }
+  .stackform button { flex: none; background: var(--accent); border-color: var(--accent); color: var(--on-accent); font-weight: 600; }
+
+  /* Who is registered in this kashta, last on the page */
+  .members { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
+  .members h2 { margin: 0 0 4px; font-size: 17px; }
+  ul.members-list { list-style: disc; margin: 0; padding: 0; padding-inline-start: 22px; border: 0; border-radius: 0; background: none; overflow: visible; }
+  ul.members-list li { padding: 2px 0; border: 0; color: var(--muted); font-size: 15.5px; line-height: 1.7; }
+  ul.members-list li::marker { color: var(--accent); }
+
+  /* The two tabs inside a kashta */
+  .subtabs { display: flex; margin: 16px 0 0; border-bottom: 1.5px solid var(--line); }
+  button.subtab {
+    flex: 1 1 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 46px;
+    margin-bottom: -1.5px;
+    padding: 8px 4px;
+    border: 0;
+    border-bottom: 3px solid transparent;
+    border-radius: 0;
+    background: none;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  button.subtab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+  .subtab .pill { font-size: 12.5px; }
+  .listbox { display: flex; flex-direction: column; gap: 26px; padding-top: 22px; }
+  #paneShared > .who-box { margin-top: 18px; }
+  #paneShared > .pending { margin-top: 22px; }
+  #paneMine > .strip { margin-top: 14px; }
+
+  /* «منو راح اييبها؟» */
+  .who-box .head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .who-box h2 { margin: 0; }
+  .who-box > .note { margin: 0; }
+  ul.who-list { background: var(--bg); }
+  li.who-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 54px; padding: 8px 14px; }
+  li.who-row .rowtext { flex: 1 1 auto; }
+  li.who-row button.skip { margin-inline-end: 0; }
+
+  /* «تقصد ...؟» */
+  .name-ask { display: flex; flex-direction: column; gap: 10px; padding: 12px; border: 1.5px solid var(--accent); border-radius: 12px; }
+  .name-ask p { margin: 0; font-weight: 600; }
+  button.more { flex: none; align-self: flex-start; min-height: 38px; padding: 4px 14px; font-size: 14.5px; font-weight: 600; color: var(--accent); }
+
+  /* Loading gear: in the middle of the screen while the page waits for the sheet. The page's
+     content stays out of sight until it is ready, then comes in softly. */
+  .loader {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .2s ease, visibility 0s linear .2s;
+  }
+  body.loading .loader { opacity: 1; visibility: visible; transition: opacity .2s ease; }
+  body.loading[data-view="calculator"] .loader { opacity: 0; visibility: hidden; }
+  .loader .gear { display: block; width: 60px; height: 60px; color: var(--accent); animation: gear-turn 1.6s linear infinite; }
+  @keyframes gear-turn { to { transform: rotate(360deg); } }
+  body.loading #viewHome, body.loading #viewItems, body.loading #nameCard { visibility: hidden; }
+  body.reveal #viewHome, body.reveal #viewItems, body.reveal #nameCard { animation: view-in .3s ease both; }
+  @keyframes view-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .loader .gear { animation-duration: 3.2s; }
+    body.reveal #viewHome, body.reveal #viewItems, body.reveal #nameCard { animation: none; }
+  }
+</style>
+</head>
+<body class="loading">
+<div class="page">
+  <header>
+    <button type="button" id="backHome" class="topback" hidden><span aria-hidden="true">→</span> الرئيسية</button>
+    <h1 id="title">أغراض الكشتة</h1>
+    <p id="kBy" class="kby" hidden></p>
+    <nav class="tabs" aria-label="أقسام الصفحة">
+      <button type="button" class="tab" data-tab="items">الأغراض</button>
+      <button type="button" class="tab" data-tab="calculator">حاسبة الماچلة</button>
+    </nav>
+  </header>
+
+  <section id="nameCard" class="card namecard" hidden aria-labelledby="nameTitle">
+    <h2 id="nameTitle">هلا! شنو اسمك؟</h2>
+    <p class="note">اكتبه مرة وحدة وينحفظ على جهازك. يطلع حق الربع يم الأغراض اللي راح تييبها.</p>
+    <form id="nameForm" class="addform">
+      <input id="nameInput" type="text" maxlength="30" placeholder="اسمك" aria-label="اسمك" autocomplete="nickname">
+      <button type="submit">ادخل</button>
+    </form>
+    <div id="nameAsk" class="name-ask" hidden>
+      <p>تقصد «<strong id="askName"></strong>»؟</p>
+      <div class="controls">
+        <button type="button" id="askYes">أيوه، هذا أنا</button>
+        <button type="button" id="askNo">لا، اسمي غير</button>
+      </div>
+    </div>
+  </section>
+
+  <div id="viewHome" data-view="items" hidden>
+    <div class="namebar">
+      <span>أنت: <strong id="homeName"></strong></span>
+      <button type="button" id="changeName2" class="small">غيّر الاسم</button>
+    </div>
+
+    <section class="card kcard" aria-labelledby="myTitle">
+      <h2 id="myTitle">كشتاتي</h2>
+      <ul id="myList" class="klist" hidden></ul>
+      <p class="note" id="myNote"></p>
+    </section>
+
+    <section class="card kcard" aria-labelledby="newTitle">
+      <h2 id="newTitle">إنشاء كشتة جديدة</h2>
+      <p class="note">تطلع لها لنك خاص ترسله لربعك، ومحد يشوفها غير اللي عنده اللنك.</p>
+      <form id="newForm" class="stackform">
+        <input id="newName" type="text" maxlength="40" placeholder="اسم الكشتة، مثلاً كشتة ١ ديسمبر" aria-label="اسم الكشتة">
+        <input id="newPin" type="password" inputmode="numeric" maxlength="20" placeholder="رمز إدارة لها، أربع أرقام أو أكثر" aria-label="رمز إدارة الكشتة" autocomplete="off">
+        <p class="note">تحتاج الرمز بس إذا بغيت تبدأ رحلة جديدة لنفس الربع.</p>
+        <button type="submit" id="newBtn">سوّ الكشتة</button>
+      </form>
+    </section>
+  </div>
+
+  <div id="viewItems" data-view="items" hidden>
+    <div class="namebar">
+      <span>أنت: <strong id="meName"></strong></span>
+      <button type="button" id="changeName" class="small">غيّر الاسم</button>
+    </div>
+    <p class="lede" id="syncNote" hidden></p>
+
+    <nav class="subtabs" role="tablist" aria-label="أغراض الكشتة">
+      <button type="button" class="subtab" role="tab" id="tabShared" aria-controls="paneShared">الأغراض المشتركة <span class="pill" id="sharedBadge" hidden></span></button>
+      <button type="button" class="subtab" role="tab" id="tabMine" aria-controls="paneMine">أغراضي الخاصة</button>
+    </nav>
+
+    <div id="paneShared" role="tabpanel" aria-labelledby="tabShared">
+      <section id="whoBox" class="card who-box" aria-live="polite">
+        <div class="head">
+          <h2>منو راح اييبها؟</h2>
+          <span class="pill" id="whoCount" hidden></span>
+        </div>
+        <ul id="whoList" class="who-list" hidden></ul>
+        <button type="button" id="whoMore" class="more" hidden></button>
+        <p class="note" id="whoNote"></p>
+      </section>
+
+      <div id="sharedList" class="listbox"></div>
+
+      <section id="notInCarBox" class="card pending" hidden aria-live="polite">
+        <h2>للحين مو بالسيارة</h2>
+        <p class="note">أغراض أحد قال إنها عليه، وللحين ما حطها بسيارته.</p>
+        <ul id="notInCarList" class="pending-list"></ul>
+      </section>
+    </div>
+
+    <div id="paneMine" role="tabpanel" aria-labelledby="tabMine" hidden>
+    <div class="strip">
+      <div class="count">
+        <span>تم <span class="num" id="doneNum">0</span> من <span class="num" id="totalNum">0</span></span>
+        <span class="left" id="leftText"></span>
+      </div>
+      <div class="bar" role="progressbar" aria-label="نسبة التجهيز" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="bar"><span id="barFill"></span></div>
+      <div class="controls">
+        <button type="button" id="filterBtn" aria-pressed="false">إظهار الباقي بس</button>
+        <button type="button" id="resetBtn">امسح تأشيراتي</button>
+      </div>
+    </div>
+
+    <div id="list" class="listbox"></div>
+
+    <form id="customForm" class="addform">
+      <input id="customInput" type="text" maxlength="80" placeholder="اكتب غرض ثاني تبيه لك" aria-label="غرض جديد لك">
+      <button type="submit">أضف</button>
+    </form>
+
+    <section id="mineBox" class="card mine" aria-live="polite"></section>
+
+    <details id="skippedBox" class="skipped-box" hidden>
+      <summary id="skippedSummary">أغراض ما تحتاجها</summary>
+      <p class="note">هذي الأغراض شلتها من قائمتك. إذا احتجت شي منها، رجّعه من هني.</p>
+      <ul id="skippedList" class="skip-list"></ul>
+    </details>
+
+    <p class="alldone" id="allDone" hidden>كل شي جاهز. توصلون بالسلامة.</p>
+    </div>
+
+    <details class="admin" id="adminBox">
+      <summary>رحلة جديدة للكل</summary>
+      <p class="note">يمسح منو مسؤول عن شنو والوجبات الإضافية بهالكشتة بس، وتأشير كل واحد فيها يتصفّر أول ما يفتحها. الأغراض اللي كتبها كل واحد لنفسه تبقى، والكشتات الثانية ما تتأثر.</p>
+      <form id="adminForm" class="addform">
+        <input id="adminPin" type="password" inputmode="numeric" maxlength="20" placeholder="رمز إدارة الكشتة" aria-label="رمز إدارة الكشتة" autocomplete="off">
+        <button type="submit" id="adminBtn">ابدأ</button>
+      </form>
+    </details>
+
+    <section id="membersBox" class="members" aria-live="polite" hidden>
+      <h2 id="membersTitle">المسجلين بالكشتة</h2>
+      <ul id="membersList" class="members-list"></ul>
+    </section>
+  </div>
+
+  <section id="viewCalc" class="calc" hidden aria-labelledby="calcTitle" data-view="calculator">
+    <div>
+      <h2 id="calcTitle">حاسبة الماچلة</h2>
+      <p class="note">الأرقام تقريبية، والوجبة السريعة ليلة الطلعة مو محسوبة.</p>
+    </div>
+
+    <div class="card">
+      <div class="field">
+        <div class="fl">
+          <span class="flabel" id="lblDays">عدد الأيام</span>
+          <span class="hint">شامل يوم الطلعة ويوم العودة</span>
+        </div>
+        <div class="stepper">
+          <button type="button" class="step" data-field="days" data-d="1" aria-label="زيادة عدد الأيام">+</button>
+          <input id="inDays" type="number" inputmode="numeric" min="2" max="14" aria-labelledby="lblDays">
+          <button type="button" class="step" data-field="days" data-d="-1" aria-label="تقليل عدد الأيام">−</button>
+        </div>
+      </div>
+      <div class="field">
+        <div class="fl">
+          <span class="flabel" id="lblPersons">عدد الأشخاص</span>
+        </div>
+        <div class="stepper">
+          <button type="button" class="step" data-field="persons" data-d="1" aria-label="زيادة عدد الأشخاص">+</button>
+          <input id="inPersons" type="number" inputmode="numeric" min="1" max="30" aria-labelledby="lblPersons">
+          <button type="button" class="step" data-field="persons" data-d="-1" aria-label="تقليل عدد الأشخاص">−</button>
+        </div>
+      </div>
+      <div class="field">
+        <div class="fl"><span class="flabel">هل الرحلة تنطلق بالليل؟</span></div>
+        <div class="seg">
+          <button type="button" id="nightYes" aria-pressed="false">أي</button>
+          <button type="button" id="nightNo" aria-pressed="false">لا</button>
+        </div>
+      </div>
+      <div class="field" id="firstDinnerField">
+        <div class="fl"><span class="flabel">هل أضيف وجبة عشا لأول يوم؟</span></div>
+        <div class="seg">
+          <button type="button" id="fdYes" aria-pressed="false">أي</button>
+          <button type="button" id="fdNo" aria-pressed="false">لا</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tiles">
+      <div class="tile"><span class="big num" id="outB">0</span><span>وجبات ريوق</span></div>
+      <div class="tile"><span class="big num" id="outM">0</span><span>وجبات غدا وعشا</span></div>
+    </div>
+
+    <div class="card" id="mainsCard">
+      <h3>غدا وعشا كل يوم</h3>
+      <div id="mainsList" class="mains"></div>
+    </div>
+
+    <div class="card">
+      <h3>الكميات</h3>
+      <table class="res"><tbody id="resBody"></tbody></table>
+    </div>
+
+    <p class="note">المعدلات للشخص في الوجبة: 4 بيضات وخبزتين في الريوق، و120 غرام عيش مع نص دجاجة أو 350 غرام لحم بالعظم في الغدا والعشا. وللشخص في كل يوم من أيام الطلعة: كيسين بطاط و3 ككاوات.</p>
+  </section>
+</div>
+<div id="loader" class="loader" role="status">
+  <svg class="gear" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><path fill="currentColor" stroke="currentColor" stroke-width="4" stroke-linejoin="round" fill-rule="evenodd" d="M41.9 14.92L43.88 6.43A44 44 0 0 1 56.12 6.43L58.1 14.92A36 36 0 0 1 69.08 19.47L76.48 14.86A44 44 0 0 1 85.14 23.52L80.53 30.92A36 36 0 0 1 85.08 41.9L93.57 43.88A44 44 0 0 1 93.57 56.12L85.08 58.1A36 36 0 0 1 80.53 69.08L85.14 76.48A44 44 0 0 1 76.48 85.14L69.08 80.53A36 36 0 0 1 58.1 85.08L56.12 93.57A44 44 0 0 1 43.88 93.57L41.9 85.08A36 36 0 0 1 30.92 80.53L23.52 85.14A44 44 0 0 1 14.86 76.48L19.47 69.08A36 36 0 0 1 14.92 58.1L6.43 56.12A44 44 0 0 1 6.43 43.88L14.92 41.9A36 36 0 0 1 19.47 30.92L14.86 23.52A44 44 0 0 1 23.52 14.86L30.92 19.47A36 36 0 0 1 41.9 14.92ZM65 50 A15 15 0 1 0 35 50 A15 15 0 1 0 65 50 Z"/></svg>
+  <span class="sr-only">جاري التحميل…</span>
+</div>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+<script>
+(function () {
+  /* The group page. Shared state (who brings which shared item, who runs the tea and the
+     coffee, which extra meals are on) lives in the Google Sheet behind this web app, so every
+     phone sees the same thing. Each person's own ticks are saved there too, under their name.
+     There can be several kashtas. Each has its own link (the page link, then # and its code) that
+     opens it straight away; the page link on its own lists the kashtas this phone has opened. */
+  var SEP = " › ";
+  var ROLE = "مسؤولية";
+  var CUSTOM = "أخرى";
+  var NAME_KEY = "kashta-group-name";
+  var CACHE_PREFIX = "kashta-group:";
+  var LIST_KEY = "kashta-group-list";
+  var POLL_MS = 30000;
+
+  var ME = "";
+  var CODE = "";
+  var KASHTA = null;
+  var HOME_LIST = [];
+  var MEMBERS = [];
+  var CATALOG = [];
+  var SHARED = { claims: {}, loaded: {}, extras: [], trip: 1 };
+  var PERSONAL = freshPersonal(0);
+  var loaded = false;
+  var busy = 0;
+  var MINE = [];
+  var SKIPPED = [];
+  var PENDING = [];
+  var uid = 0;
+
+  var $ = function (id) { return document.getElementById(id); };
+  var nameCard = $("nameCard"), nameForm = $("nameForm"), nameInput = $("nameInput");
+  var viewItems = $("viewItems"), viewCalc = $("viewCalc");
+  var meName = $("meName"), syncNote = $("syncNote"), list = $("list"), sharedList = $("sharedList");
+  var doneNum = $("doneNum"), totalNum = $("totalNum"), leftText = $("leftText");
+  var bar = $("bar"), barFill = $("barFill"), filterBtn = $("filterBtn"), resetBtn = $("resetBtn");
+  var allDone = $("allDone"), customForm = $("customForm"), customInput = $("customInput");
+  var toastEl = $("toast");
+  var viewHome = $("viewHome"), titleEl = $("title"), kBy = $("kBy");
+  var myList = $("myList"), myNote = $("myNote"), newForm = $("newForm"), newName = $("newName"), newPin = $("newPin");
+
+  /* ---------- small helpers ---------- */
+
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+  function clean(v) { return String(v == null ? "" : v).replace(/\s+/g, " ").trim().slice(0, 30); }
+  function lsGet(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { window.localStorage.setItem(k, v); } catch (e) {} }
+  function joinNames(arr) { return (arr || []).join(" و"); }
+
+  var toastTimer = null;
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.hidden = false;
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toastEl.hidden = true; }, 3800);
+  }
+  function note(msg) {
+    syncNote.textContent = msg;
+    syncNote.hidden = !msg;
+  }
+
+  /* The loading gear. While the page waits on the sheet for something it needs before it can
+     show anything (the page opening, a kashta, the list of kashtas, a new kashta, checking a
+     name), the content stays out of sight and a gear turns in the middle of the screen.
+     Background refreshes and taps on items don't show it. The page starts with it on (the body
+     comes with the class) until the first view is ready. */
+  var spinCount = 1, revealTimer = null;
+  function spinStart() {
+    spinCount++;
+    if (revealTimer) { clearTimeout(revealTimer); revealTimer = null; }
+    document.body.classList.remove("reveal");
+    document.body.classList.add("loading");
+  }
+  function spinStop() {
+    if (spinCount <= 0) return;
+    spinCount--;
+    if (spinCount > 0) return;
+    document.body.classList.remove("loading");
+    document.body.classList.add("reveal");
+    if (revealTimer) clearTimeout(revealTimer);
+    revealTimer = setTimeout(function () { document.body.classList.remove("reveal"); revealTimer = null; }, 450);
+  }
+  /* Shows the gear until the call answers. If it never does, the gear goes after a while so the
+     page doesn't stay hidden. */
+  function withSpin(p) {
+    var done = false;
+    function stop() { if (!done) { done = true; spinStop(); } }
+    spinStart();
+    var t = setTimeout(stop, 25000);
+    return p.then(function (v) { clearTimeout(t); stop(); return v; },
+      function (e) { clearTimeout(t); stop(); throw e; });
+  }
+
+  /* Where the page talks to the sheet. Inside Apps Script (the old link) it uses
+     google.script.run. On its own site it posts to the script's web address, which answers in
+     JSON (doPost in Code.gs). No cookies go with it: the script runs as its owner and needs none. */
+  var API_URL = "https://script.google.com/macros/s/AKfycbwut5GXOptvwtevGKaK68E0LcyDpaDStXCOuZVQK2Fr-kAke0t8rQYhJ1Tw3Cou53gf4A/exec";
+  var GAS = !!(window.google && google.script && google.script.run);
+
+  function call(fn, args, opts) {
+    if (GAS) {
+      return new Promise(function (resolve, reject) {
+        var r = google.script.run.withSuccessHandler(resolve).withFailureHandler(reject);
+        r[fn].apply(r, args || []);
+      });
+    }
+    return fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ fn: fn, args: args || [] }),
+      credentials: "omit",
+      keepalive: !!(opts && opts.keepalive)
+    }).then(function (r) {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    }).then(function (res) {
+      if (!res || res.ok !== true) throw new Error((res && res.error) || "no answer");
+      return res.data;
+    });
+  }
+
+  /* ---------- personal state ---------- */
+
+  function freshPersonal(trip) { return { ticks: {}, skip: {}, custom: [], onlyLeft: false, trip: trip || 0 }; }
+
+  function validPersonal(o) {
+    if (!o || typeof o !== "object") return null;
+    var p = freshPersonal(Number(o.trip) || 0);
+    if (o.ticks && typeof o.ticks === "object") {
+      Object.keys(o.ticks).forEach(function (k) { if (o.ticks[k] === true) p.ticks[k] = true; });
+    }
+    if (o.skip && typeof o.skip === "object") {
+      Object.keys(o.skip).forEach(function (k) { if (o.skip[k] === true) p.skip[k] = true; });
+    }
+    if (Array.isArray(o.custom)) {
+      p.custom = o.custom.filter(function (x) {
+        return x && typeof x.id === "string" && typeof x.text === "string";
+      }).map(function (x) { return { id: x.id, text: x.text.slice(0, 80) }; });
+    }
+    p.onlyLeft = !!o.onlyLeft;
+    return p;
+  }
+
+  function cacheKey() { return CACHE_PREFIX + CODE + ":" + ME; }
+  function cached() {
+    if (!CODE || !ME) return null;
+    try { return validPersonal(JSON.parse(lsGet(cacheKey()) || "null")); } catch (e) { return null; }
+  }
+  function cacheLocal() { if (CODE && ME) lsSet(cacheKey(), JSON.stringify(PERSONAL)); }
+
+  var saveTimer = null, pendingSave = null;
+  function savePersonalSoon() {
+    if (!CODE || !ME) return;
+    cacheLocal();
+    pendingSave = { me: ME, code: CODE, data: PERSONAL };
+    if (saveTimer) clearTimeout(saveTimer);
+    saveTimer = setTimeout(flushSave, 700);
+  }
+  /* Sends a waiting save now, for the kashta it was made in. Also runs before leaving a kashta,
+     and when the page goes out of sight (`leaving`), so a tick made just before closing still
+     reaches the sheet. */
+  function flushSave(leaving) {
+    if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
+    var p = pendingSave;
+    pendingSave = null;
+    if (!p) return;
+    call("savePersonal", [p.me, JSON.parse(JSON.stringify(p.data)), p.code], { keepalive: leaving === true }).then(null, function () {
+      if (leaving !== true) toast("ما انحفظ تأشيرك. تأكد من النت.");
+    });
+  }
+
+  /* A new trip (started by the admin) clears everyone's own ticks; extra items stay. */
+  function checkTrip() {
+    if (PERSONAL.trip !== SHARED.trip) {
+      PERSONAL.ticks = {};
+      PERSONAL.trip = SHARED.trip;
+      savePersonalSoon();
+    }
+  }
+
+  function adoptPersonal(server) {
+    var fromServer = server && typeof server === "object" && Object.keys(server).length ? validPersonal(server) : null;
+    PERSONAL = fromServer || cached() || freshPersonal(SHARED.trip);
+    if (!fromServer) savePersonalSoon();
+    checkTrip();
+    cacheLocal();
+  }
+
+  /* ---------- shared state ---------- */
+
+  function normShared(s) {
+    s = s || {};
+    var claims = {};
+    if (s.claims && typeof s.claims === "object") {
+      Object.keys(s.claims).forEach(function (k) {
+        if (Array.isArray(s.claims[k]) && s.claims[k].length) claims[k] = s.claims[k].slice();
+      });
+    }
+    var inCar = {};
+    if (s.loaded && typeof s.loaded === "object") {
+      Object.keys(s.loaded).forEach(function (k) {
+        if (Array.isArray(s.loaded[k]) && s.loaded[k].length) inCar[k] = s.loaded[k].slice();
+      });
+    }
+    return { claims: claims, loaded: inCar, extras: Array.isArray(s.extras) ? s.extras.slice() : [], trip: Number(s.trip) || 1 };
+  }
+
+  function applyShared(sh) {
+    SHARED = normShared(sh);
+    checkTrip();
+    render();
+  }
+
+  function toggleClaim(key, mineNow) {
+    var holders = (SHARED.claims[key] || []).filter(function (n) { return n !== ME; });
+    if (!mineNow) holders.push(ME);
+    if (holders.length) SHARED.claims[key] = holders; else delete SHARED.claims[key];
+    if (mineNow && SHARED.loaded[key]) {
+      var stillIn = SHARED.loaded[key].filter(function (n) { return n !== ME; });
+      if (stillIn.length) SHARED.loaded[key] = stillIn; else delete SHARED.loaded[key];
+    }
+    render();
+    var code = CODE;
+    busy++;
+    call(mineNow ? "unclaim" : "claim", [ME, key, code]).then(function (res) {
+      busy--;
+      if (code !== CODE) return;
+      if (res && res.shared) applyShared(res.shared);
+      if (res && res.ok === false) {
+        if (res.reason === "full") toast("سبقك " + joinNames(res.by) + " عليه.");
+        else if (res.reason === "gone") toast("هذا الغرض انشال من القائمة.");
+      }
+    }, function () {
+      busy--;
+      if (code !== CODE) return;
+      toast("ما انحفظ. تأكد من النت وجرب مرة ثانية.");
+      refresh();
+    });
+  }
+
+  function setLoaded(key, on) {
+    var list = (SHARED.loaded[key] || []).filter(function (n) { return n !== ME; });
+    if (on) list.push(ME);
+    if (list.length) SHARED.loaded[key] = list; else delete SHARED.loaded[key];
+    render();
+    var code = CODE;
+    busy++;
+    call("setLoaded", [ME, key, on, code]).then(function (res) {
+      busy--;
+      if (code !== CODE) return;
+      if (res && res.shared) applyShared(res.shared);
+      if (res && res.ok === false && res.reason === "notmine") toast("هذا الغرض مو عليك.");
+    }, function () {
+      busy--;
+      if (code !== CODE) return;
+      toast("ما انحفظ. تأكد من النت وجرب مرة ثانية.");
+      refresh();
+    });
+  }
+
+  function toggleExtra(name, on) {
+    SHARED.extras = SHARED.extras.filter(function (x) { return x !== name; });
+    if (on) SHARED.extras.push(name);
+    render();
+    var code = CODE;
+    busy++;
+    call("setExtra", [name, on, code]).then(function (res) {
+      busy--;
+      if (code !== CODE) return;
+      if (res && res.shared) applyShared(res.shared);
+    }, function () {
+      busy--;
+      if (code !== CODE) return;
+      toast("ما انحفظ. تأكد من النت وجرب مرة ثانية.");
+      refresh();
+    });
+  }
+
+  /* ---------- loading and refreshing ---------- */
+
+  function load() {
+    var code = CODE;
+    if (!code) return;
+    note("");
+    withSpin(call("getState", [ME, code])).then(function (st) {
+      if (code !== CODE) return;
+      if (!st || st.missing) {
+        forgetKashta(code);
+        toast("ما لقيت هالكشتة. يمكن انحذفت أو اللنك ناقص.");
+        openHome(true);
+        return;
+      }
+      KASHTA = st.kashta;
+      rememberKashta(code);
+      CATALOG = Array.isArray(st.catalog) ? st.catalog : [];
+      SHARED = normShared(st.shared);
+      MEMBERS = Array.isArray(st.members) ? st.members.slice() : [];
+      if (ME) adoptPersonal(st.personal);
+      loaded = true;
+      note("");
+      showKashtaHead();
+      render();
+    }, function () {
+      if (code !== CODE) return;
+      note("ما قدرت أحمّل القائمة. تأكد من النت وحدّث الصفحة.");
+    });
+  }
+
+  function refresh() {
+    if (!loaded || busy > 0 || !CODE) return;
+    var code = CODE;
+    call("poll", [code]).then(function (st) {
+      if (busy > 0 || code !== CODE) return;
+      if (!st || st.missing) {
+        forgetKashta(code);
+        toast("ما لقيت هالكشتة. يمكن انحذفت.");
+        openHome(true);
+        return;
+      }
+      if (st.kashta && KASHTA && (st.kashta.name !== KASHTA.name || st.kashta.by !== KASHTA.by)) {
+        KASHTA = st.kashta;
+        showKashtaHead();
+      }
+      var changed = false;
+      var cat = Array.isArray(st.catalog) ? st.catalog : [];
+      if (JSON.stringify(cat) !== JSON.stringify(CATALOG)) { CATALOG = cat; changed = true; }
+      var sh = normShared(st.shared);
+      if (JSON.stringify(sh) !== JSON.stringify(SHARED)) { SHARED = sh; changed = true; }
+      var mem = Array.isArray(st.members) ? st.members : MEMBERS;
+      if (JSON.stringify(mem) !== JSON.stringify(MEMBERS)) { MEMBERS = mem.slice(); changed = true; }
+      var trip = PERSONAL.trip;
+      checkTrip();
+      if (trip !== PERSONAL.trip) changed = true;
+      if (changed) render();
+    }, function () {});
+  }
+  setInterval(function () { if (!document.hidden) refresh(); }, POLL_MS);
+  document.addEventListener("visibilitychange", function () { if (!document.hidden) refresh(); });
+  document.addEventListener("visibilitychange", function () { if (document.hidden) flushSave(true); });
+  window.addEventListener("pagehide", function () { flushSave(true); });
+
+  /* ---------- rendering ---------- */
+
+  /* Status lines under a shared item, one per person who took it. */
+  function statusLines(holders, inCar, need) {
+    if (!holders.length) return [need >= 2 ? "يكفي اثنين" : "يكفي واحد"];
+    var lines = holders.map(function (n) {
+      var car = inCar.indexOf(n) >= 0;
+      if (n === ME) return car ? "بسيارتك" : "عليك، أشّر إذا حطيته بالسيارة";
+      return car ? "بسيارة " + n : "على " + n + "، للحين مو بالسيارة";
+    });
+    if (need >= 2 && holders.length < need) lines.push("يبي واحد بعد");
+    return lines;
+  }
+
+  function actionButton(li, text, aria, onClick) {
+    li.classList.add("with-action");
+    var b = el("button", "skip", text);
+    b.type = "button";
+    b.setAttribute("aria-label", aria);
+    b.addEventListener("click", onClick);
+    li.appendChild(b);
+  }
+
+  /* One item row.
+     need 0: everyone brings their own; the tick is personal.
+     need 1 or 2: shared. «عليّ» puts your name on it; only you then see an active box, and you
+     tick it when the item is actually in your car («حطيته بالسيارة»). */
+  function rowEl(key, text, need, t, mineLabel, quiet, optional) {
+    if (need === 0 && optional && PERSONAL.skip[key]) {
+      SKIPPED.push({ key: key, text: text });
+      return null;
+    }
+    var li = el("li", "row");
+    var id = "cb" + (++uid);
+    var label = el("label");
+    label.setAttribute("for", id);
+    var cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.id = id;
+    var body = el("span", "rowtext");
+    body.appendChild(el("span", "txt", text));
+    label.appendChild(cb);
+    label.appendChild(body);
+    li.appendChild(label);
+
+    var counts = false, done = false, settled = false, strike = false;
+    if (need === 0) {
+      counts = true;
+      done = settled = strike = !!PERSONAL.ticks[key];
+      cb.checked = done;
+      cb.addEventListener("change", function () {
+        if (cb.checked) PERSONAL.ticks[key] = true; else delete PERSONAL.ticks[key];
+        savePersonalSoon();
+        render();
+      });
+      if (optional && !done) {
+        actionButton(li, "ما احتاجه", "ما احتاج " + text, function () {
+          PERSONAL.skip[key] = true;
+          delete PERSONAL.ticks[key];
+          savePersonalSoon();
+          render();
+          toast("شلته من قائمتك. تلقاه تحت في «أغراض ما تحتاجها».");
+        });
+      }
+    } else {
+      var holders = SHARED.claims[key] || [];
+      var inCar = SHARED.loaded[key] || [];
+      var mine = holders.indexOf(ME) >= 0;
+      var mineIn = inCar.indexOf(ME) >= 0;
+      var full = holders.length >= need;
+      var allIn = full && holders.every(function (n) { return inCar.indexOf(n) >= 0; });
+      var shown = mineLabel || text;
+      holders.forEach(function (n) {
+        if (inCar.indexOf(n) < 0) PENDING.push({ name: n, label: shown });
+      });
+      if (mine) {
+        counts = true;
+        done = settled = mineIn;
+        cb.checked = mineIn;
+        cb.setAttribute("aria-label", "حطيته بالسيارة: " + text);
+        cb.addEventListener("change", function () { setLoaded(key, cb.checked); });
+        MINE.push({ label: shown, inCar: mineIn });
+      } else {
+        cb.checked = allIn;
+        cb.disabled = true;
+        li.classList.add("taken");
+        settled = full;
+      }
+      strike = allIn;
+      var lines = statusLines(holders, inCar, need);
+      if (holders.length || !quiet) {
+        lines.forEach(function (line) {
+          body.appendChild(el("span", holders.length && line !== "يبي واحد بعد" ? "who has" : "who", line));
+        });
+      }
+      if (mine && !mineIn) {
+        actionButton(li, "إلغاء", "ما بييب " + text, function () { toggleClaim(key, true); });
+      } else if (!mine && !full) {
+        actionButton(li, "عليّ", "أنا بييب " + text, function () { toggleClaim(key, false); });
+      }
+    }
+    if (strike) li.classList.add("done");
+    li.hidden = PERSONAL.onlyLeft && settled;
+    t.rows++;
+    if (settled) t.settled++;
+    if (counts) {
+      t.total++;
+      if (done) t.done++;
+    }
+    return li;
+  }
+
+  function entriesOf(sec, forceNeed) {
+    return sec.items.map(function (it) {
+      return {
+        key: sec.name + SEP + it.name,
+        text: it.name,
+        need: forceNeed == null ? it.need : forceNeed,
+        optional: forceNeed == null && !!it.optional,
+        mineLabel: sec.kind === "gear" ? it.name : it.name + " (" + sec.name + ")",
+        quiet: sec.kind === "food" || sec.kind === "extra"
+      };
+    });
+  }
+
+  /* A section. The pill counts only what is on this person; every row still shows. */
+  function groupEl(title, headTag, entries, tally, extraRow) {
+    var wrap = el("section", "group");
+    var head = el("div", "head");
+    head.appendChild(el(headTag, null, title));
+    var pill = el("span", "pill");
+    head.appendChild(pill);
+    var ul = el("ul");
+    var t = { total: 0, done: 0, rows: 0, settled: 0 };
+    entries.forEach(function (e) {
+      var li = rowEl(e.key, e.text, e.need, t, e.mineLabel, e.quiet, e.optional);
+      if (!li) return;
+      if (extraRow) extraRow(li, e);
+      ul.appendChild(li);
+    });
+    var complete = t.total > 0 && t.done === t.total;
+    pill.textContent = complete ? "تم" : t.done + " من " + t.total;
+    pill.className = complete ? "pill done" : "pill";
+    pill.hidden = t.total === 0;
+    wrap.appendChild(head);
+    if (t.rows) wrap.appendChild(ul);
+    wrap.hidden = (entries.length > 0 && t.rows === 0) || (PERSONAL.onlyLeft && t.settled === t.rows);
+    tally.total += t.total;
+    tally.done += t.done;
+    return wrap;
+  }
+
+  /* A meal or kit one person runs. Extra meals that belong to it (French toast under breakfast,
+     burger under lunch and dinner) are switched on here, and their items join its list. */
+  function roleCard(sec, tally, kids) {
+    var key = ROLE + SEP + sec.name;
+    var holders = SHARED.claims[key] || [];
+    var mine = holders.indexOf(ME) >= 0;
+    var activeKids = kids.filter(function (k) { return SHARED.extras.indexOf(k.name) >= 0; });
+    var card = el("div", mine ? "duty on" : "duty");
+    var q = el("div", "q");
+    var label = el("span", "q-text");
+    q.appendChild(label);
+    card.appendChild(q);
+
+    if (mine) {
+      label.textContent = sec.name + " عليك";
+      var cancel = el("button", "small", "إلغاء");
+      cancel.type = "button";
+      cancel.addEventListener("click", function () { toggleClaim(key, true); });
+      q.appendChild(cancel);
+      MINE.push({ label: sec.name, role: true });
+    } else if (holders.length) {
+      label.textContent = sec.name + " على " + joinNames(holders);
+    } else {
+      label.textContent = sec.name + ": محد مسؤول بعد";
+      var take = el("button", "small", "عليّ");
+      take.type = "button";
+      take.setAttribute("aria-label", "أنا مسؤول " + sec.name);
+      take.addEventListener("click", function () { toggleClaim(key, false); });
+      q.appendChild(take);
+    }
+
+    if (mine && kids.length) {
+      var ideas = el("div", "ideas");
+      ideas.appendChild(el("span", "note", sec.name.indexOf("ال") === 0 ? "أفكار لل" + sec.name.slice(2) : "أفكار لـ" + sec.name));
+      var seg = el("div", "seg wrap");
+      kids.forEach(function (k) {
+        var on = SHARED.extras.indexOf(k.name) >= 0;
+        var b = el("button", null, k.name);
+        b.type = "button";
+        b.setAttribute("aria-pressed", on ? "true" : "false");
+        b.addEventListener("click", function () { toggleExtra(k.name, !on); });
+        seg.appendChild(b);
+      });
+      ideas.appendChild(seg);
+      card.appendChild(ideas);
+    }
+
+    if (mine) {
+      if (sec.items.length) card.appendChild(groupEl("أغراضها", "h3", entriesOf(sec, 0), tally));
+      activeKids.forEach(function (k) { card.appendChild(groupEl(k.name, "h3", entriesOf(k, 0), tally)); });
+    } else if (sec.items.length || activeKids.length) {
+      var peek = el("details", "peek");
+      peek.appendChild(el("summary", null, "شوف أغراضها"));
+      var ul = el("ul", "peek-list");
+      sec.items.forEach(function (it) { ul.appendChild(el("li", null, it.name)); });
+      activeKids.forEach(function (k) {
+        k.items.forEach(function (it) { ul.appendChild(el("li", null, it.name + " (" + k.name + ")")); });
+      });
+      peek.appendChild(ul);
+      card.appendChild(peek);
+    }
+    return card;
+  }
+
+  function blockHead(title, sub) {
+    var box = el("div", "block-head");
+    box.appendChild(el("h2", null, title));
+    if (sub) box.appendChild(el("p", "note", sub));
+    return box;
+  }
+
+  /* «منو راح اييبها؟»: roles nobody took, and shared items that still need someone, with «عليّ».
+     The count also shows on the «الأغراض المشتركة» tab. */
+  var whoOpen = false;
+  $("whoMore").addEventListener("click", function () {
+    whoOpen = !whoOpen;
+    render();
+  });
+  function renderWho(roles, sections) {
+    var gaps = [];
+    roles.forEach(function (sec) {
+      var key = ROLE + SEP + sec.name;
+      if (!(SHARED.claims[key] || []).length) gaps.push({ key: key, text: sec.name, sub: "مسؤولية", mine: false });
+    });
+    sections.forEach(function (sec) {
+      sec.items.forEach(function (it) {
+        if (!(it.need > 0)) return;
+        var key = sec.name + SEP + it.name;
+        var holders = SHARED.claims[key] || [];
+        if (holders.length >= it.need) return;
+        var mine = holders.indexOf(ME) >= 0;
+        var sub = sec.name + (it.need >= 2 ? (holders.length ? (mine ? "، عليك ويبي واحد بعد" : "، يبي واحد بعد") : "، يكفي اثنين") : "");
+        gaps.push({ key: key, text: it.name, sub: sub, mine: mine });
+      });
+    });
+    var ul = $("whoList");
+    ul.textContent = "";
+    var LIMIT = 5;
+    gaps.forEach(function (g, i) {
+      var li = el("li", "who-row");
+      li.hidden = !whoOpen && i >= LIMIT;
+      var body = el("span", "rowtext");
+      body.appendChild(el("span", "txt", g.text));
+      body.appendChild(el("span", "who", g.sub));
+      li.appendChild(body);
+      if (!g.mine) {
+        var b = el("button", "skip", "عليّ");
+        b.type = "button";
+        b.setAttribute("aria-label", "أنا بييب " + g.text);
+        b.addEventListener("click", function () { toggleClaim(g.key, false); });
+        li.appendChild(b);
+      }
+      ul.appendChild(li);
+    });
+    ul.hidden = gaps.length === 0;
+    var more = $("whoMore");
+    more.hidden = gaps.length <= LIMIT;
+    more.textContent = whoOpen ? "اعرض أقل" : "اعرض الباقي (" + (gaps.length - LIMIT) + ")";
+    $("whoCount").textContent = String(gaps.length);
+    $("whoCount").hidden = gaps.length === 0;
+    $("whoNote").textContent = gaps.length ? "" : "كل الأغراض المشتركة والمسؤوليات لها أحد.";
+    $("whoNote").hidden = gaps.length > 0;
+    $("sharedBadge").textContent = String(gaps.length);
+    $("sharedBadge").hidden = gaps.length === 0;
+  }
+
+  function render() {
+    if (!ME || !loaded) return;
+    meName.textContent = ME;
+    list.textContent = "";
+    sharedList.textContent = "";
+    MINE = [];
+    SKIPPED = [];
+    PENDING = [];
+    var tally = { total: 0, done: 0 };
+    var roles = CATALOG.filter(function (s) { return s.kind === "role"; });
+    var foods = CATALOG.filter(function (s) { return s.kind === "food"; });
+    var extras = CATALOG.filter(function (s) { return s.kind === "extra"; });
+    var gear = CATALOG.filter(function (s) { return s.kind === "gear"; });
+    var roleNames = roles.map(function (s) { return s.name; });
+    var looseExtras = extras.filter(function (s) { return roleNames.indexOf(s.parent) < 0; });
+
+    if (roles.length) {
+      var rb = el("section", "block");
+      rb.appendChild(blockHead("المسؤوليات", "كل وحدة يمسكها شخص واحد، وأغراضها تطلع له هو."));
+      roles.forEach(function (sec) {
+        rb.appendChild(roleCard(sec, tally, extras.filter(function (k) { return k.parent === sec.name; })));
+      });
+      sharedList.appendChild(rb);
+    }
+
+    if (foods.length || looseExtras.length) {
+      var fb = el("section", "block");
+      fb.appendChild(blockHead("الماچلة", "كل صنف يكفي واحد اييبه. اضغط «عليّ» على اللي بتشتريه، وأشّر عليه لما تحطه بالسيارة."));
+      foods.forEach(function (sec) { fb.appendChild(groupEl(sec.name, "h3", entriesOf(sec), tally)); });
+      if (looseExtras.length) {
+        var ex = el("div", "duty");
+        ex.appendChild(el("span", "q-text", "وجبات إضافية"));
+        ex.appendChild(el("p", "note", "شغّل الوجبة إذا قررتوا تسوونها، وتطلع أصنافها للكل."));
+        var seg = el("div", "seg wrap");
+        looseExtras.forEach(function (sec) {
+          var on = SHARED.extras.indexOf(sec.name) >= 0;
+          var b = el("button", null, sec.name);
+          b.type = "button";
+          b.setAttribute("aria-pressed", on ? "true" : "false");
+          b.addEventListener("click", function () { toggleExtra(sec.name, !on); });
+          seg.appendChild(b);
+        });
+        ex.appendChild(seg);
+        looseExtras.forEach(function (sec) {
+          if (SHARED.extras.indexOf(sec.name) >= 0) ex.appendChild(groupEl(sec.name, "h3", entriesOf(sec), tally));
+        });
+        fb.appendChild(ex);
+      }
+      sharedList.appendChild(fb);
+    }
+
+    /* Shared items (one or two people bring them) go to «الأغراض المشتركة»; what everyone brings
+       for themselves goes to «أغراضي الخاصة». */
+    var gb = el("section", "block");
+    gb.appendChild(blockHead("الأغراض", "اضغط «عليّ» على اللي بتييبه، وأشّر عليه لما تحطه بالسيارة."));
+    var anyShared = false;
+    gear.forEach(function (sec) {
+      var shared = entriesOf(sec).filter(function (e) { return e.need > 0; });
+      if (!shared.length) return;
+      anyShared = true;
+      gb.appendChild(groupEl(sec.name, "h2", shared, tally));
+    });
+    if (anyShared) sharedList.appendChild(gb);
+    list.appendChild(el("p", "note", "كل واحد اييب حق نفسه. أشّر على الغرض أول ما تحطه بالسيارة."));
+    gear.forEach(function (sec) {
+      var own = entriesOf(sec).filter(function (e) { return e.need === 0; });
+      if (own.length) list.appendChild(groupEl(sec.name, "h2", own, tally));
+    });
+
+    renderWho(roles, foods.concat(gear).concat(looseExtras.filter(function (s) { return SHARED.extras.indexOf(s.name) >= 0; })));
+
+    var customEntries = PERSONAL.custom.map(function (it) {
+      return { key: CUSTOM + SEP + it.id, text: it.text, need: 0, id: it.id };
+    });
+    var cg = groupEl("أغراض أخرى", "h2", customEntries, tally, function (li, e) {
+      li.classList.add("custom-row");
+      var del = el("button", "del", "حذف");
+      del.type = "button";
+      del.setAttribute("aria-label", "حذف " + e.text);
+      del.addEventListener("click", function () {
+        PERSONAL.custom = PERSONAL.custom.filter(function (x) { return x.id !== e.id; });
+        delete PERSONAL.ticks[e.key];
+        savePersonalSoon();
+        render();
+      });
+      li.appendChild(del);
+    });
+    cg.appendChild(el("p", "note", "تطلع لك بس، وتبقى للطلعات الياية."));
+    cg.hidden = false;
+    list.appendChild(cg);
+
+    /* What this person has said they will bring, at the bottom of the page. */
+    var mine = $("mineBox");
+    mine.textContent = "";
+    var mh = el("div", "head");
+    mh.appendChild(el("h2", null, "اللي عليك"));
+    if (MINE.length) mh.appendChild(el("span", "pill", String(MINE.length)));
+    mine.appendChild(mh);
+    if (MINE.length) {
+      var chips = el("ul", "chips");
+      MINE.forEach(function (m) { chips.appendChild(el("li", m.inCar ? "in" : null, m.label)); });
+      mine.appendChild(chips);
+      var pending = MINE.filter(function (m) { return !m.role && !m.inCar; }).length;
+      var items = MINE.filter(function (m) { return !m.role; }).length;
+      if (items) {
+        mine.appendChild(el("p", "note", pending ? "باقي " + pending + " للحين مو بسيارتك." : "كل اللي عليك بسيارتك."));
+      }
+    } else {
+      mine.appendChild(el("p", "note", "ما أخذت شي بعد. اضغط «عليّ» على أي غرض أو مسؤولية في «الأغراض المشتركة»، ويطلع هنا."));
+    }
+
+    /* Everything someone took that is not in their car yet, by person. */
+    var byName = {};
+    var order = [];
+    PENDING.forEach(function (p) {
+      if (!byName[p.name]) { byName[p.name] = []; order.push(p.name); }
+      byName[p.name].push(p.label);
+    });
+    var pl = $("notInCarList");
+    pl.textContent = "";
+    order.forEach(function (n) {
+      var li = el("li");
+      li.appendChild(el("strong", null, n === ME ? "أنت" : n));
+      li.appendChild(document.createTextNode(": " + byName[n].join("، ")));
+      pl.appendChild(li);
+    });
+    $("notInCarBox").hidden = order.length === 0;
+
+    /* Items this person said they don't need, out of the way at the bottom. */
+    var sl = $("skippedList");
+    sl.textContent = "";
+    SKIPPED.forEach(function (e) {
+      var li = el("li", "skip-row");
+      li.appendChild(el("span", "txt", e.text));
+      var b = el("button", "skip", "أحتاجه");
+      b.type = "button";
+      b.setAttribute("aria-label", "أحتاج " + e.text);
+      b.addEventListener("click", function () {
+        delete PERSONAL.skip[e.key];
+        savePersonalSoon();
+        render();
+      });
+      li.appendChild(b);
+      sl.appendChild(li);
+    });
+    $("skippedSummary").textContent = "أغراض ما تحتاجها (" + SKIPPED.length + ")";
+    $("skippedBox").hidden = SKIPPED.length === 0;
+
+    var left = tally.total - tally.done;
+    doneNum.textContent = tally.done;
+    totalNum.textContent = tally.total;
+    leftText.textContent = left === 0 ? "ما بقى شي" : "الباقي " + left;
+    var pct = tally.total ? Math.round((tally.done / tally.total) * 100) : 0;
+    barFill.style.width = pct + "%";
+    bar.setAttribute("aria-valuenow", String(pct));
+    filterBtn.setAttribute("aria-pressed", PERSONAL.onlyLeft ? "true" : "false");
+    filterBtn.textContent = PERSONAL.onlyLeft ? "إظهار الكل" : "إظهار الباقي بس";
+    allDone.hidden = !(tally.total > 0 && left === 0);
+
+    /* Everyone who has opened this kashta with their name, last on the page. */
+    $("membersTitle").textContent = "المسجلين بالكشتة (" + MEMBERS.length + ")";
+    var ml = $("membersList");
+    ml.textContent = "";
+    MEMBERS.forEach(function (n) {
+      var li = el("li", "");
+      li.appendChild(el("bdi", "", n));
+      ml.appendChild(li);
+    });
+    $("membersBox").hidden = MEMBERS.length === 0;
+  }
+
+  /* ---------- controls ---------- */
+
+  filterBtn.addEventListener("click", function () {
+    PERSONAL.onlyLeft = !PERSONAL.onlyLeft;
+    savePersonalSoon();
+    render();
+  });
+
+  var armTimer = null;
+  function disarm() {
+    resetBtn.classList.remove("armed");
+    resetBtn.textContent = "امسح تأشيراتي";
+    armTimer = null;
+  }
+  resetBtn.addEventListener("click", function () {
+    if (armTimer) {
+      clearTimeout(armTimer);
+      disarm();
+      PERSONAL.ticks = {};
+      PERSONAL.onlyLeft = false;
+      savePersonalSoon();
+      /* also your «حطيته بالسيارة» marks; what you said is on you stays on you */
+      Object.keys(SHARED.loaded).forEach(function (k) {
+        var left = SHARED.loaded[k].filter(function (n) { return n !== ME; });
+        if (left.length) SHARED.loaded[k] = left; else delete SHARED.loaded[k];
+      });
+      render();
+      var code = CODE;
+      busy++;
+      call("clearMyCar", [ME, code]).then(function (res) {
+        busy--;
+        if (code !== CODE) return;
+        if (res && res.shared) applyShared(res.shared);
+      }, function () {
+        busy--;
+        if (code !== CODE) return;
+        toast("ما انحفظ. تأكد من النت وجرب مرة ثانية.");
+        refresh();
+      });
+      toast("مسحت تأشيراتك. اللي عليك باقي عليك.");
+      return;
+    }
+    resetBtn.classList.add("armed");
+    resetBtn.textContent = "أكيد؟ اضغط مرة ثانية";
+    armTimer = setTimeout(disarm, 4000);
+  });
+
+  customForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var text = customInput.value.replace(/\s+/g, " ").trim().slice(0, 80);
+    if (!text) return;
+    PERSONAL.custom.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), text: text });
+    savePersonalSoon();
+    render();
+    customInput.value = "";
+    customInput.focus();
+  });
+
+  $("adminForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var pin = $("adminPin").value;
+    var btn = $("adminBtn");
+    btn.disabled = true;
+    var code = CODE;
+    call("resetTrip", [pin, code]).then(function (res) {
+      btn.disabled = false;
+      if (code !== CODE) return;
+      if (res && res.ok) {
+        $("adminPin").value = "";
+        applyShared(res.shared);
+        toast("بدأت رحلة جديدة للكل بهالكشتة.");
+      } else {
+        toast("الرمز غلط.");
+      }
+    }, function () {
+      btn.disabled = false;
+      toast("ما انحفظ. تأكد من النت وجرب مرة ثانية.");
+    });
+  });
+
+  /* ---------- name and views ---------- */
+
+  function setName(n) {
+    flushSave();
+    ME = n;
+    lsSet(NAME_KEY, n);
+    showView("items");
+    if (CODE) {
+      PERSONAL = cached() || freshPersonal(SHARED.trip);
+      loaded = false;
+      load();
+    } else {
+      loadHome();
+    }
+  }
+
+  var askTyped = "", askSimilar = "";
+  nameForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var n = clean(nameInput.value);
+    if (!n) { nameInput.focus(); return; }
+    var btn = nameForm.querySelector("button[type=submit]");
+    btn.disabled = true;
+    withSpin(call("nameMatch", [n, CODE])).then(function (res) {
+      btn.disabled = false;
+      if (res && res.similar && res.similar !== n) {
+        askTyped = n;
+        askSimilar = res.similar;
+        $("askName").textContent = res.similar;
+        $("nameAsk").hidden = false;
+        return;
+      }
+      setName(n);
+    }, function () {
+      btn.disabled = false;
+      setName(n);
+    });
+  });
+  $("askYes").addEventListener("click", function () {
+    $("nameAsk").hidden = true;
+    setName(askSimilar);
+  });
+  $("askNo").addEventListener("click", function () {
+    $("nameAsk").hidden = true;
+    setName(askTyped);
+  });
+  nameInput.addEventListener("input", function () { $("nameAsk").hidden = true; });
+  function askName() {
+    $("nameAsk").hidden = true;
+    nameCard.hidden = false;
+    viewItems.hidden = true;
+    viewHome.hidden = true;
+    nameInput.value = ME;
+    nameInput.focus();
+  }
+  $("changeName").addEventListener("click", askName);
+  $("changeName2").addEventListener("click", askName);
+
+  function showView(key) {
+    document.body.setAttribute("data-view", key);
+    var needName = key === "items" && !ME;
+    nameCard.hidden = !needName;
+    viewItems.hidden = key !== "items" || needName || !CODE;
+    viewHome.hidden = key !== "items" || needName || !!CODE;
+    viewCalc.hidden = key !== "calculator";
+    Array.prototype.forEach.call(document.querySelectorAll("[data-tab]"), function (t) {
+      t.setAttribute("aria-current", t.getAttribute("data-tab") === key ? "page" : "false");
+    });
+  }
+  Array.prototype.forEach.call(document.querySelectorAll("[data-tab]"), function (t) {
+    t.addEventListener("click", function () { showView(t.getAttribute("data-tab")); });
+  });
+
+  var PANE_KEY = "kashta-group-pane";
+  function showPane(p) {
+    var mine = p === "mine";
+    $("paneShared").hidden = mine;
+    $("paneMine").hidden = !mine;
+    $("tabShared").setAttribute("aria-selected", mine ? "false" : "true");
+    $("tabMine").setAttribute("aria-selected", mine ? "true" : "false");
+    lsSet(PANE_KEY, mine ? "mine" : "shared");
+  }
+  $("tabShared").addEventListener("click", function () { showPane("shared"); });
+  $("tabMine").addEventListener("click", function () { showPane("mine"); });
+  showPane(lsGet(PANE_KEY) === "mine" ? "mine" : "shared");
+
+  /* ---------- kashtas: this phone's list, opening one, making one ---------- */
+
+  function normCode(v) { return String(v == null ? "" : v).toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 20); }
+  function codeFrom(loc) {
+    if (!loc) return "";
+    var h = String(loc.hash || "").replace(/^#/, "").replace(/^k=/i, "");
+    return normCode(h) || normCode(loc.parameter && loc.parameter.k);
+  }
+  /* The address the page is at, in the shape google.script.url.getLocation gives it. */
+  function hereNow() {
+    var q = {};
+    try { new URLSearchParams(window.location.search).forEach(function (v, k) { q[k] = v; }); } catch (e) {}
+    return { hash: window.location.hash, parameter: q };
+  }
+  /* Puts the kashta's code in the address (#code), so the link can be copied and Back works. */
+  function nav(code) {
+    if (GAS) { try { google.script.history.push({ k: code }, {}, code); } catch (e) {} return; }
+    try { window.history.pushState({ k: code }, "", code ? "#" + code : window.location.pathname + window.location.search); } catch (e) {}
+  }
+  function myCodes() {
+    try {
+      var a = JSON.parse(lsGet(LIST_KEY) || "null");
+      return Array.isArray(a) ? a.map(normCode).filter(function (c) { return c; }) : null;
+    } catch (e) { return null; }
+  }
+  function saveCodes(a) { lsSet(LIST_KEY, JSON.stringify(a.slice(0, 30))); }
+  function rememberKashta(code) {
+    var a = (myCodes() || []).filter(function (c) { return c !== code; });
+    a.unshift(code);
+    saveCodes(a);
+  }
+  function forgetKashta(code) {
+    saveCodes((myCodes() || []).filter(function (c) { return c !== code; }));
+  }
+
+  /* Clears what the last kashta left on screen until the next one loads. */
+  function blank() {
+    list.textContent = "";
+    sharedList.textContent = "";
+    $("whoList").textContent = "";
+    $("whoList").hidden = true;
+    $("whoMore").hidden = true;
+    whoOpen = false;
+    $("whoCount").hidden = true;
+    $("whoNote").textContent = "";
+    $("sharedBadge").hidden = true;
+    $("mineBox").textContent = "";
+    $("notInCarBox").hidden = true;
+    $("skippedBox").hidden = true;
+    $("membersBox").hidden = true;
+    allDone.hidden = true;
+    doneNum.textContent = "0";
+    totalNum.textContent = "0";
+    leftText.textContent = "";
+    barFill.style.width = "0%";
+  }
+
+  function showKashtaHead() {
+    titleEl.textContent = KASHTA ? KASHTA.name : "أغراض الكشتة";
+    if (!GAS) document.title = KASHTA ? KASHTA.name : "أغراض الكشتة";
+    kBy.textContent = KASHTA && KASHTA.by ? "سواها " + KASHTA.by : "";
+    kBy.hidden = !(CODE && KASHTA && KASHTA.by);
+    $("backHome").hidden = !CODE;
+  }
+
+  function route(code) {
+    if (code) openKashta(code, false); else openHome(false);
+  }
+
+  function openKashta(code, push) {
+    flushSave();
+    CODE = code;
+    KASHTA = null;
+    loaded = false;
+    SHARED = normShared(null);
+    MEMBERS = [];
+    PERSONAL = cached() || freshPersonal(0);
+    blank();
+    showKashtaHead();
+    if (push) nav(code);
+    showView("items");
+    if (ME) load();
+  }
+
+  function openHome(push) {
+    flushSave();
+    CODE = "";
+    KASHTA = null;
+    loaded = false;
+    showKashtaHead();
+    if (push) nav("");
+    showView("items");
+    if (ME) loadHome();
+  }
+
+  /* A phone that used the page before there were several kashtas has a name saved but no list
+     yet: its first visit to the list also brings in the first kashta, where its ticks are. */
+  var LEGACY = false;
+
+  function loadHome() {
+    renderHome(null);
+    withSpin(call("myKashtas", [myCodes() || [], LEGACY, ME])).then(function (res) {
+      if (CODE) return;
+      LEGACY = false;
+      HOME_LIST = res && Array.isArray(res.list) ? res.list : [];
+      saveCodes(HOME_LIST.map(function (k) { return k.code; }));
+      renderHome(HOME_LIST);
+    }, function () {
+      if (CODE) return;
+      renderHome([]);
+      myNote.textContent = "ما قدرت أحمّل كشتاتك. تأكد من النت وحدّث الصفحة.";
+    });
+  }
+
+  function renderHome(items) {
+    $("homeName").textContent = ME;
+    myList.textContent = "";
+    if (items === null) {
+      myList.hidden = true;
+      myNote.hidden = true;
+      myNote.textContent = "";
+      return;
+    }
+    items.forEach(function (k) {
+      var li = el("li", "krow");
+      var open = el("button", "kopen");
+      open.type = "button";
+      open.appendChild(el("span", "kname", k.name));
+      if (k.by) open.appendChild(el("span", "who", "سواها " + k.by));
+      open.addEventListener("click", function () { openKashta(k.code, true); });
+      li.appendChild(open);
+      var rm = el("button", "small kforget", "شيلها");
+      rm.type = "button";
+      rm.setAttribute("aria-label", "شيل " + k.name + " من قائمتك");
+      rm.addEventListener("click", function () {
+        forgetKashta(k.code);
+        HOME_LIST = HOME_LIST.filter(function (x) { return x.code !== k.code; });
+        renderHome(HOME_LIST);
+        toast("شلتها من قائمتك. ترجع لها من لنكها.");
+        call("hideKashta", [ME, k.code]).then(null, function () {
+          toast("ما انحفظ. تأكد من النت وجرب مرة ثانية.");
+        });
+      });
+      li.appendChild(rm);
+      myList.appendChild(li);
+    });
+    myList.hidden = items.length === 0;
+    myNote.hidden = items.length > 0;
+    myNote.textContent = items.length ? "" : "ما عندك كشتات للحين. إذا وصلك لنك كشتة من ربعك افتحه، وبتنحفظ هني.";
+  }
+
+  newForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var name = newName.value.replace(/\s+/g, " ").trim().slice(0, 40);
+    var pin = newPin.value.trim();
+    if (!name) { toast("اكتب اسم الكشتة."); newName.focus(); return; }
+    if (pin.length < 4) { toast("رمز الإدارة لازم يكون أربع أرقام أو أكثر."); newPin.focus(); return; }
+    var btn = $("newBtn");
+    btn.disabled = true;
+    withSpin(call("createKashta", [name, ME, pin])).then(function (res) {
+      btn.disabled = false;
+      if (res && res.ok) {
+        newName.value = "";
+        newPin.value = "";
+        rememberKashta(res.kashta.code);
+        openKashta(res.kashta.code, true);
+        toast("سويت الكشتة.");
+        return;
+      }
+      var why = res && res.reason;
+      toast(why === "pin" ? "رمز الإدارة لازم يكون أربع أرقام أو أكثر."
+        : why === "name" ? "اكتب اسم الكشتة."
+        : why === "many" ? "وصلنا الحد من الكشتات."
+        : "ما قدرت أسوي الكشتة. جرب مرة ثانية.");
+    }, function () {
+      btn.disabled = false;
+      toast("ما انحفظ. تأكد من النت وجرب مرة ثانية.");
+    });
+  });
+
+  $("backHome").addEventListener("click", function () { openHome(true); });
+
+  ME = clean(lsGet(NAME_KEY) || "");
+  LEGACY = !!ME && myCodes() === null;
+  if (GAS) {
+    try {
+      google.script.history.setChangeHandler(function (e) { route(codeFrom(e && e.location)); });
+    } catch (err) {}
+  } else {
+    /* Back/Forward, or a different #code typed or opened in this tab. Going back between
+       kashtas fires both events; the second finds the page already there. */
+    var onAddress = function () {
+      var c = codeFrom(hereNow());
+      if (booted && c === CODE) return;
+      route(c);
+    };
+    window.addEventListener("popstate", onAddress);
+    window.addEventListener("hashchange", onAddress);
+  }
+  /* The first view takes over the gear the page opened with. */
+  var booted = false;
+  function boot(code) {
+    route(code);
+    if (booted) return;
+    booted = true;
+    spinStop();
+  }
+  if (GAS) {
+    try {
+      google.script.url.getLocation(function (loc) { boot(codeFrom(loc)); });
+    } catch (err) {
+      boot("");
+    }
+  } else {
+    boot(codeFrom(hereNow()));
+  }
+  setTimeout(function () { if (!booted) boot(""); }, 8000);
+})();
+
+</script>
+<script>
+(function () {
+  /* Calculator */
+  var RATES = { eggs: 4, bread: 2, rice: 120, chicken: 0.5, meat: 350, chips: 2, cacao: 3 };
+  var LIMITS = { days: [2, 14], persons: [1, 30] };
+  var ORD = ["", "الأول", "الثاني", "الثالث", "الرابع", "الخامس", "السادس", "السابع",
+             "الثامن", "التاسع", "العاشر", "الحادي عشر", "الثاني عشر", "الثالث عشر", "الرابع عشر"];
+  var CKEY = "kashta-calc-v1";
+  var c = { days: 3, persons: 5, kinds: {}, night: "yes", firstDinner: "no" };
+
+  try {
+    var raw = window.localStorage.getItem(CKEY);
+    if (raw) {
+      var s = JSON.parse(raw);
+      if (s && typeof s === "object") {
+        if (typeof s.days === "number") c.days = s.days;
+        if (typeof s.persons === "number") c.persons = s.persons;
+        if (s.kinds && typeof s.kinds === "object") c.kinds = s.kinds;
+        if (s.night === "yes" || s.night === "no") c.night = s.night;
+        if (s.firstDinner === "yes" || s.firstDinner === "no") c.firstDinner = s.firstDinner;
+      }
+    }
+  } catch (e) {}
+  function saveCalc() {
+    try { window.localStorage.setItem(CKEY, JSON.stringify(c)); } catch (e) {}
+  }
+  function applyCalc(s) {
+    if (!s || typeof s !== "object") return;
+    if (typeof s.days === "number") c.days = clamp("days", s.days);
+    if (typeof s.persons === "number") c.persons = clamp("persons", s.persons);
+    var kinds = {};
+    if (s.kinds && typeof s.kinds === "object") {
+      Object.keys(s.kinds).forEach(function (k) { if (s.kinds[k] === "meat" || s.kinds[k] === "chicken") kinds[k] = s.kinds[k]; });
+    }
+    c.kinds = kinds;
+    c.night = s.night === "no" ? "no" : "yes";
+    c.firstDinner = s.firstDinner === "yes" ? "yes" : "no";
+    try { window.localStorage.setItem(CKEY, JSON.stringify(c)); } catch (e) {}
+  }
+  function clamp(field, v) {
+    var lim = LIMITS[field];
+    v = Math.round(Number(v));
+    if (!isFinite(v)) v = lim[0];
+    return Math.min(lim[1], Math.max(lim[0], v));
+  }
+  c.days = clamp("days", c.days);
+  c.persons = clamp("persons", c.persons);
+
+  function plural(n, one, two, few, many) {
+    if (n === 1) return one;
+    if (n === 2) return two;
+    if (n >= 3 && n <= 10) return n + " " + few;
+    return n + " " + many;
+  }
+  function weight(g) {
+    if (g < 1000) return g + " غرام";
+    return (Math.round(g / 100) / 10) + " كيلو";
+  }
+
+  var inputs = { days: document.getElementById("inDays"), persons: document.getElementById("inPersons") };
+  var outB = document.getElementById("outB");
+  var outM = document.getElementById("outM");
+  var mainsCard = document.getElementById("mainsCard");
+  var mainsList = document.getElementById("mainsList");
+  var resBody = document.getElementById("resBody");
+  var builtFor = "";
+  var kindBtns = [];
+  var nightBtns = { yes: document.getElementById("nightYes"), no: document.getElementById("nightNo") };
+  var fdBtns = { yes: document.getElementById("fdYes"), no: document.getElementById("fdNo") };
+  var firstDinnerField = document.getElementById("firstDinnerField");
+
+  function mainDays() {
+    var list = [];
+    if (c.night === "no" && c.firstDinner === "yes") list.push(1);
+    for (var d = 2; d <= c.days - 1; d++) list.push(d);
+    return list;
+  }
+
+  function buildMains(days) {
+    mainsList.textContent = "";
+    kindBtns = [];
+    days.forEach(function (day) {
+      (function (day) {
+        var row = document.createElement("div");
+        row.className = "mrow";
+        var t = document.createElement("span");
+        t.className = "q-text";
+        t.textContent = "اليوم " + ORD[day];
+        var seg = document.createElement("div");
+        seg.className = "seg";
+        [["chicken", "دجاج"], ["meat", "لحم"]].forEach(function (k) {
+          var b = document.createElement("button");
+          b.type = "button";
+          b.id = "kind-" + day + "-" + k[0];
+          b.textContent = k[1];
+          b.addEventListener("click", function () {
+            c.kinds[day] = k[0];
+            saveCalc();
+            render();
+          });
+          seg.appendChild(b);
+          kindBtns.push({ day: day, kind: k[0], btn: b });
+        });
+        row.appendChild(t);
+        row.appendChild(seg);
+        mainsList.appendChild(row);
+      })(day);
+    });
+    builtFor = days.join(",");
+  }
+
+  function addRow(name, val, sub) {
+    var tr = document.createElement("tr");
+    var th = document.createElement("th");
+    th.textContent = name;
+    var td = document.createElement("td");
+    var v = document.createElement("span");
+    v.className = "val";
+    v.textContent = val;
+    td.appendChild(v);
+    if (sub) {
+      var s = document.createElement("span");
+      s.className = "sub";
+      s.textContent = sub;
+      td.appendChild(s);
+    }
+    tr.appendChild(th);
+    tr.appendChild(td);
+    resBody.appendChild(tr);
+  }
+
+  function render() {
+    inputs.days.value = c.days;
+    inputs.persons.value = c.persons;
+    var P = c.persons;
+    var B = c.days - 1;
+    var days = mainDays();
+    var M = days.length;
+    outB.textContent = B;
+    outM.textContent = M;
+
+    nightBtns.yes.setAttribute("aria-pressed", c.night === "yes" ? "true" : "false");
+    nightBtns.no.setAttribute("aria-pressed", c.night === "no" ? "true" : "false");
+    firstDinnerField.hidden = c.night !== "no";
+    fdBtns.yes.setAttribute("aria-pressed", c.firstDinner === "yes" ? "true" : "false");
+    fdBtns.no.setAttribute("aria-pressed", c.firstDinner === "no" ? "true" : "false");
+
+    if (builtFor !== days.join(",")) buildMains(days);
+    mainsCard.hidden = M === 0;
+    var chickenMeals = 0, meatMeals = 0;
+    days.forEach(function (d) {
+      if (c.kinds[d] === "meat") meatMeals++; else chickenMeals++;
+    });
+    kindBtns.forEach(function (k) {
+      var cur = c.kinds[k.day] === "meat" ? "meat" : "chicken";
+      k.btn.setAttribute("aria-pressed", cur === k.kind ? "true" : "false");
+    });
+
+    resBody.textContent = "";
+    var eggs = B * P * RATES.eggs;
+    var trays = Math.ceil(eggs / 30);
+    var bread = B * P * RATES.bread;
+    var rice = M * P * RATES.rice;
+    var chickens = Math.ceil(chickenMeals * P * RATES.chicken);
+    var meat = meatMeals * P * RATES.meat;
+
+    if (eggs > 0) addRow("البيض", plural(eggs, "بيضة", "بيضتين", "بيضات", "بيضة"),
+      "الطبق 30 بيضة، يعني تحتاج " + plural(trays, "طبق واحد", "طبقين", "أطباق", "طبق"));
+    if (bread > 0) addRow("الخبز", plural(bread, "خبزة", "خبزتين", "خبزات", "خبزة"), "للريوق");
+    var chips = c.days * P * RATES.chips;
+    var cacao = c.days * P * RATES.cacao;
+    addRow("البطاط", plural(chips, "كيس واحد", "كيسين", "أكياس", "كيس"), "على مسؤول الريوق، لكل أيام الطلعة");
+    addRow("الككاو", plural(cacao, "ككاوة وحدة", "ككاوتين", "ككاوات", "ككاوة"), "على مسؤول الريوق، لكل أيام الطلعة");
+    if (rice > 0) addRow("العيش", weight(rice), "قبل الطبخ");
+    if (chickens > 0) addRow("الدجاج", plural(chickens, "دجاجة وحدة", "دجاجتين", "دجاجات", "دجاجة"),
+      plural(chickenMeals, "وجبة وحدة", "وجبتين", "وجبات", "وجبة") + "، متقربة لأقرب دجاجة كاملة");
+    if (meat > 0) addRow("اللحم", weight(meat),
+      plural(meatMeals, "وجبة وحدة", "وجبتين", "وجبات", "وجبة") + "، لحم بالعظم");
+  }
+
+  document.querySelectorAll(".step").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var f = b.getAttribute("data-field");
+      c[f] = clamp(f, c[f] + Number(b.getAttribute("data-d")));
+      saveCalc();
+      render();
+    });
+  });
+  ["yes", "no"].forEach(function (v) {
+    nightBtns[v].addEventListener("click", function () { c.night = v; saveCalc(); render(); });
+    fdBtns[v].addEventListener("click", function () { c.firstDinner = v; saveCalc(); render(); });
+  });
+  ["days", "persons"].forEach(function (f) {
+    inputs[f].addEventListener("change", function () {
+      c[f] = clamp(f, inputs[f].value);
+      saveCalc();
+      render();
+    });
+  });
+
+  render();
+})();
+
+</script>
+</body>
+</html>
