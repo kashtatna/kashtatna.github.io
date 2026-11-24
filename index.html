@@ -625,6 +625,38 @@
     .loader .gear { animation-duration: 3.2s; }
     body.reveal #viewHome, body.reveal #viewItems, body.reveal #nameCard { animation: none; }
   }
+
+  /* The kashta owner's list editing: the button above the tabs, the panel, and «شيله» on each row. */
+  .ownerbox { margin: 4px 0 14px; }
+  button.wide-outline { width: 100%; flex: none; border-color: var(--accent); color: var(--accent); font-weight: 600; background: transparent; }
+  .edit-panel { border: 1.5px solid var(--accent); border-radius: 14px; padding: 14px; background: var(--surface); }
+  .edit-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .edit-head h2 { margin: 0; font-size: 18px; }
+  .edit-panel > .note { margin: 6px 0 12px; }
+  .stackform select {
+    min-height: 46px;
+    padding: 0 10px;
+    font: inherit;
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    color: var(--ink);
+  }
+  .stackform button.secondary { background: var(--surface); border-color: var(--line); color: var(--ink); font-weight: 500; }
+  .hidden-box { margin-top: 14px; }
+  .hidden-box h3 { margin: 0 0 6px; font-size: 16px; }
+  li.edit-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; }
+  li.edit-row .rowtext { flex: 1; min-width: 0; }
+  li.edit-row .tag { display: block; color: var(--muted); font-size: 13px; }
+  li.edit-row button, .edit-duty .q button { flex: none; min-width: 72px; min-height: 36px; padding: 4px 12px; font-size: 14px; }
+  li.edit-row button.drop, .edit-duty .q button.drop { color: #B3261E; border-color: rgba(179, 38, 30, .45); }
+  @media (prefers-color-scheme: dark) {
+    li.edit-row button.drop, .edit-duty .q button.drop { color: #F2B8B5; border-color: rgba(242, 184, 181, .45); }
+  }
+  .edit-duty ul { margin: 10px 0 0; }
+  #viewItems.editing #whoBox, #viewItems.editing #notInCarBox, #viewItems.editing .strip,
+  #viewItems.editing #customForm, #viewItems.editing #mineBox, #viewItems.editing #skippedBox,
+  #viewItems.editing #allDone, #viewItems.editing #adminBox, #viewItems.editing #membersBox { display: none !important; }
 </style>
 </head>
 <body class="loading">
@@ -686,6 +718,32 @@
     </div>
     <p class="lede" id="syncNote" hidden></p>
 
+    <section id="ownerBox" class="ownerbox" hidden>
+      <button type="button" id="editOpen" class="wide-outline">عدّل قائمة الكشتة</button>
+      <div id="editPanel" class="edit-panel" hidden>
+        <div class="edit-head">
+          <h2>تعديل قائمة الكشتة</h2>
+          <button type="button" id="editDone" class="small">خلصت</button>
+        </div>
+        <p class="note">اضغط «شيله» على أي غرض ما تحتاجونه بهالكشتة، وينشال عند كل الربع. وتقدر تضيف غرض لهالكشتة بس.</p>
+        <form id="addItemForm" class="stackform">
+          <input id="addItemName" type="text" maxlength="40" placeholder="اسم الغرض" aria-label="اسم الغرض" autocomplete="off">
+          <select id="addItemSection" aria-label="القسم"></select>
+          <select id="addItemWho" aria-label="منو اييبه">
+            <option value="واحد يكفي">يكفي واحد اييبه</option>
+            <option value="اثنين يكفون">يكفي اثنين اييبونه</option>
+            <option value="كل واحد">كل واحد اييب حقه</option>
+            <option value="كل واحد إذا يحتاجه">كل واحد إذا يحتاجه</option>
+          </select>
+          <button type="submit" id="addItemBtn">أضف للكشتة</button>
+        </form>
+        <div id="hiddenBox" class="hidden-box" hidden>
+          <h3>اللي شلته من هالكشتة</h3>
+          <ul id="hiddenList"></ul>
+        </div>
+      </div>
+    </section>
+
     <nav class="subtabs" role="tablist" aria-label="أغراض الكشتة">
       <button type="button" class="subtab" role="tab" id="tabShared" aria-controls="paneShared">الأغراض المشتركة <span class="pill" id="sharedBadge" hidden></span></button>
       <button type="button" class="subtab" role="tab" id="tabMine" aria-controls="paneMine">أغراضي الخاصة</button>
@@ -743,11 +801,14 @@
     </div>
 
     <details class="admin" id="adminBox">
-      <summary>رحلة جديدة للكل</summary>
-      <p class="note">يمسح منو مسؤول عن شنو والوجبات الإضافية بهالكشتة بس، وتأشير كل واحد فيها يتصفّر أول ما يفتحها. الأغراض اللي كتبها كل واحد لنفسه تبقى، والكشتات الثانية ما تتأثر.</p>
-      <form id="adminForm" class="addform">
+      <summary>إدارة الكشتة</summary>
+      <p class="note">لصاحب الكشتة، برمز الإدارة اللي حطه لما سواها.</p>
+      <form id="adminForm" class="stackform">
         <input id="adminPin" type="password" inputmode="numeric" maxlength="20" placeholder="رمز إدارة الكشتة" aria-label="رمز إدارة الكشتة" autocomplete="off">
-        <button type="submit" id="adminBtn">ابدأ</button>
+        <button type="button" id="adminEdit">عدّل القائمة</button>
+        <p class="note">تشيل الأغراض اللي ما تحتاجونها بهالكشتة أو تضيف غيرها، وتتغير عند الكل. وجهازك يحفظ الرمز، فالمرة الياية تلقى الزر فوق.</p>
+        <button type="submit" id="adminBtn" class="secondary">رحلة جديدة للكل</button>
+        <p class="note">يمسح منو مسؤول عن شنو والوجبات الإضافية بهالكشتة بس، وتأشير كل واحد فيها يتصفّر أول ما يفتحها. الأغراض اللي كتبها كل واحد لنفسه تبقى، والكشتات الثانية ما تتأثر.</p>
       </form>
     </details>
 
@@ -845,6 +906,13 @@
   var HOME_LIST = [];
   var MEMBERS = [];
   var CATALOG = [];
+  /* This kashta's own changes to the item list, made by its owner: what was taken off (hide, by
+     key) and what was added just for it (add). The catalog the page gets already has them applied;
+     these are for the owner's «اللي شلته» list. */
+  var LIST = { hide: [], add: [] };
+  /* The owner is editing this kashta's list. Only a phone that has the kashta's admin code can. */
+  var EDIT = false;
+  var PIN_KEY = "kashta-group-pin:";
   var SHARED = { claims: {}, loaded: {}, extras: [], trip: 1 };
   var PERSONAL = freshPersonal(0);
   var loaded = false;
@@ -877,6 +945,17 @@
   function lsGet(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
   function lsSet(k, v) { try { window.localStorage.setItem(k, v); } catch (e) {} }
   function joinNames(arr) { return (arr || []).join(" و"); }
+  /* The admin code this phone has for the open kashta: saved when it made the kashta, or when its
+     owner typed the code in «إدارة الكشتة». */
+  function ownerPin() { return CODE ? (lsGet(PIN_KEY + CODE) || "") : ""; }
+  function savePin(code, pin) { lsSet(PIN_KEY + code, pin); }
+  function forgetPin(code) { try { window.localStorage.removeItem(PIN_KEY + code); } catch (e) {} }
+  function normList(l) {
+    return {
+      hide: l && Array.isArray(l.hide) ? l.hide.slice() : [],
+      add: l && Array.isArray(l.add) ? l.add.slice() : []
+    };
+  }
 
   var toastTimer = null;
   function toast(msg) {
@@ -1124,6 +1203,7 @@
       KASHTA = st.kashta;
       rememberKashta(code);
       CATALOG = Array.isArray(st.catalog) ? st.catalog : [];
+      LIST = normList(st.list);
       SHARED = normShared(st.shared);
       MEMBERS = Array.isArray(st.members) ? st.members.slice() : [];
       if (ME) adoptPersonal(st.personal);
@@ -1155,6 +1235,8 @@
       var changed = false;
       var cat = Array.isArray(st.catalog) ? st.catalog : [];
       if (JSON.stringify(cat) !== JSON.stringify(CATALOG)) { CATALOG = cat; changed = true; }
+      var lst = normList(st.list);
+      if (JSON.stringify(lst) !== JSON.stringify(LIST)) { LIST = lst; changed = true; }
       var sh = normShared(st.shared);
       if (JSON.stringify(sh) !== JSON.stringify(SHARED)) { SHARED = sh; changed = true; }
       var mem = Array.isArray(st.members) ? st.members : MEMBERS;
@@ -1290,7 +1372,8 @@
         need: forceNeed == null ? it.need : forceNeed,
         optional: forceNeed == null && !!it.optional,
         mineLabel: sec.kind === "gear" ? it.name : it.name + " (" + sec.name + ")",
-        quiet: sec.kind === "food" || sec.kind === "extra"
+        quiet: sec.kind === "food" || sec.kind === "extra",
+        added: !!it.added
       };
     });
   }
@@ -1305,9 +1388,9 @@
     var ul = el("ul");
     var t = { total: 0, done: 0, rows: 0, settled: 0 };
     entries.forEach(function (e) {
-      var li = rowEl(e.key, e.text, e.need, t, e.mineLabel, e.quiet, e.optional);
+      var li = EDIT ? editRow(e, t) : rowEl(e.key, e.text, e.need, t, e.mineLabel, e.quiet, e.optional);
       if (!li) return;
-      if (extraRow) extraRow(li, e);
+      if (extraRow && !EDIT) extraRow(li, e);
       ul.appendChild(li);
     });
     var complete = t.total > 0 && t.done === t.total;
@@ -1326,6 +1409,24 @@
      burger under lunch and dinner) are switched on here, and their items join its list. */
   function roleCard(sec, tally, kids) {
     var key = ROLE + SEP + sec.name;
+    if (EDIT) {
+      var ec = el("div", "duty edit-duty");
+      var eq = el("div", "q");
+      eq.appendChild(el("span", "q-text", sec.name));
+      var drop = el("button", "drop", "شيلها");
+      drop.type = "button";
+      drop.setAttribute("aria-label", "شيل مسؤولية " + sec.name + " من الكشتة");
+      drop.addEventListener("click", function () { dropItem(key, sec.name); });
+      eq.appendChild(drop);
+      ec.appendChild(eq);
+      if (sec.items.length) {
+        var et = { total: 0, done: 0, rows: 0, settled: 0 };
+        var eul = el("ul");
+        entriesOf(sec, 0).forEach(function (e) { eul.appendChild(editRow(e, et)); });
+        ec.appendChild(eul);
+      }
+      return ec;
+    }
     var holders = SHARED.claims[key] || [];
     var mine = holders.indexOf(ME) >= 0;
     var activeKids = kids.filter(function (k) { return SHARED.extras.indexOf(k.name) >= 0; });
@@ -1450,6 +1551,7 @@
 
   function render() {
     if (!ME || !loaded) return;
+    renderOwner();
     meName.textContent = ME;
     list.textContent = "";
     sharedList.textContent = "";
@@ -1477,7 +1579,7 @@
       var fb = el("section", "block");
       fb.appendChild(blockHead("الماچلة", "كل صنف يكفي واحد اييبه. اضغط «عليّ» على اللي بتشتريه، وأشّر عليه لما تحطه بالسيارة."));
       foods.forEach(function (sec) { fb.appendChild(groupEl(sec.name, "h3", entriesOf(sec), tally)); });
-      if (looseExtras.length) {
+      if (looseExtras.length && !EDIT) {
         var ex = el("div", "duty");
         ex.appendChild(el("span", "q-text", "وجبات إضافية"));
         ex.appendChild(el("p", "note", "شغّل الوجبة إذا قررتوا تسوونها، وتطلع أصنافها للكل."));
@@ -1519,6 +1621,12 @@
 
     renderWho(roles, foods.concat(gear).concat(looseExtras.filter(function (s) { return SHARED.extras.indexOf(s.name) >= 0; })));
 
+    if (!EDIT) renderCustom(tally);
+    renderMine(tally);
+  }
+
+  /* «أغراض أخرى»: what this person wrote for themselves. */
+  function renderCustom(tally) {
     var customEntries = PERSONAL.custom.map(function (it) {
       return { key: CUSTOM + SEP + it.id, text: it.text, need: 0, id: it.id };
     });
@@ -1538,7 +1646,10 @@
     cg.appendChild(el("p", "note", "تطلع لك بس، وتبقى للطلعات الياية."));
     cg.hidden = false;
     list.appendChild(cg);
+  }
 
+  /* What this person is bringing, what is not in a car yet, skipped items, progress, members. */
+  function renderMine(tally) {
     /* What this person has said they will bring, at the bottom of the page. */
     var mine = $("mineBox");
     mine.textContent = "";
@@ -1618,6 +1729,205 @@
     });
     $("membersBox").hidden = MEMBERS.length === 0;
   }
+
+  /* ---------- the owner's list editing ---------- */
+
+  /* A row while the owner edits the list: the item, and «شيله» to take it off this kashta. */
+  function editRow(e, t) {
+    var li = el("li", "row edit-row");
+    var body = el("span", "rowtext");
+    body.appendChild(el("span", "txt", e.text));
+    if (e.added) body.appendChild(el("span", "tag", "مضاف لهالكشتة"));
+    li.appendChild(body);
+    var b = el("button", "drop", "شيله");
+    b.type = "button";
+    b.setAttribute("aria-label", "شيل " + e.text + " من الكشتة");
+    b.addEventListener("click", function () { dropItem(e.key, e.text); });
+    li.appendChild(b);
+    t.rows++;
+    return li;
+  }
+
+  /* Sends one list change. The answer carries the kashta's list as it now is; while more changes
+     are still on their way, the page keeps what it already shows. */
+  var editBusy = 0;
+  function listCall(fn, args, okMsg) {
+    var code = CODE;
+    busy++;
+    editBusy++;
+    return call(fn, args).then(function (res) {
+      busy--;
+      editBusy--;
+      if (code !== CODE) return res;
+      if (res && res.ok) {
+        if (editBusy === 0) {
+          CATALOG = Array.isArray(res.catalog) ? res.catalog : CATALOG;
+          LIST = normList(res.list);
+          render();
+        }
+        if (okMsg) toast(okMsg);
+        return res;
+      }
+      var why = res && res.reason;
+      if (why === "pin") {
+        forgetPin(code);
+        EDIT = false;
+        toast("رمز الإدارة تغيّر. دخّله من جديد من «إدارة الكشتة».");
+      } else if (why === "dup") toast("هالغرض موجود بالقائمة.");
+      else if (why === "section") toast("اختار قسم من القائمة.");
+      else if (why === "item") toast("اكتب اسم الغرض.");
+      else if (why === "many") toast("وصلت الحد من الأغراض المضافة.");
+      else toast("ما انحفظ التعديل.");
+      if (editBusy === 0) refresh();
+      return res;
+    }, function () {
+      busy--;
+      editBusy--;
+      if (code !== CODE) return null;
+      toast("ما انحفظ التعديل. تأكد من النت.");
+      if (editBusy === 0) refresh();
+      return null;
+    });
+  }
+
+  /* «شيله»: off this kashta's list for everyone, right away on this phone. A role takes its extra
+     meals with it. An item that was only added for this kashta is deleted. */
+  function dropItem(key, text) {
+    var pin = ownerPin();
+    if (!pin) return;
+    var isRole = key.indexOf(ROLE + SEP) === 0;
+    var role = isRole ? key.slice((ROLE + SEP).length) : "";
+    var at = key.indexOf(SEP);
+    var sec = key.slice(0, at), item = key.slice(at + SEP.length);
+    var wasAdded = !isRole && LIST.add.some(function (a) { return a.s === sec && a.i === item; });
+    CATALOG = CATALOG.filter(function (s) {
+      return !(isRole && ((s.kind === "role" && s.name === role) || (s.kind === "extra" && s.parent === role)));
+    }).map(function (s) {
+      if (isRole || s.name !== sec) return s;
+      return { name: s.name, kind: s.kind, parent: s.parent, items: s.items.filter(function (it) { return it.name !== item; }) };
+    });
+    if (wasAdded) LIST.add = LIST.add.filter(function (a) { return !(a.s === sec && a.i === item); });
+    else if (LIST.hide.indexOf(key) < 0) LIST.hide.push(key);
+    render();
+    toast((isRole ? "شلت مسؤولية «" : "شلت «") + text + "» من الكشتة.");
+    listCall("listHide", [pin, key, CODE], "");
+  }
+
+  /* «رجّعه»: back on this kashta's list. */
+  function restoreItem(key, text) {
+    var pin = ownerPin();
+    if (!pin) return;
+    LIST.hide = LIST.hide.filter(function (x) { return x !== key; });
+    renderOwner();
+    listCall("listShow", [pin, key, CODE], "رجعت «" + text + "» للكشتة.");
+  }
+
+  /* The owner's box above the tabs: «عدّل قائمة الكشتة», or the editing panel with the add form
+     and what was taken off. Only on a phone that has this kashta's admin code. */
+  function renderOwner() {
+    var pin = ownerPin();
+    if (!pin) EDIT = false;
+    $("ownerBox").hidden = !pin;
+    $("editOpen").hidden = EDIT;
+    $("editPanel").hidden = !EDIT;
+    $("viewItems").classList.toggle("editing", EDIT);
+    if (!EDIT) return;
+    var sel = $("addItemSection");
+    var keep = sel.value;
+    sel.textContent = "";
+    var gearFirst = CATALOG.filter(function (s) { return s.kind === "gear"; })
+      .concat(CATALOG.filter(function (s) { return s.kind === "food"; }))
+      .concat(CATALOG.filter(function (s) { return s.kind === "role"; }));
+    gearFirst.forEach(function (s) {
+      var o = document.createElement("option");
+      o.value = s.name;
+      o.textContent = s.kind === "role" ? "مسؤولية " + s.name : s.name;
+      if (s.kind === "role") o.setAttribute("data-role", "1");
+      sel.appendChild(o);
+    });
+    if (keep && [].some.call(sel.options, function (o) { return o.value === keep; })) sel.value = keep;
+    whoForSection();
+    var ul = $("hiddenList");
+    ul.textContent = "";
+    LIST.hide.forEach(function (key) {
+      var at = key.indexOf(SEP);
+      var sec = key.slice(0, at), item = key.slice(at + SEP.length);
+      var li = el("li", "row edit-row");
+      var body = el("span", "rowtext");
+      body.appendChild(el("span", "txt", item));
+      body.appendChild(el("span", "tag", sec === ROLE ? "مسؤولية" : sec));
+      li.appendChild(body);
+      var b = el("button", null, "رجّعه");
+      b.type = "button";
+      b.setAttribute("aria-label", "رجّع " + item + " للكشتة");
+      b.addEventListener("click", function () { restoreItem(key, item); });
+      li.appendChild(b);
+      ul.appendChild(li);
+    });
+    $("hiddenBox").hidden = LIST.hide.length === 0;
+  }
+
+  /* A role's items go to whoever takes the role, so «منو اييبه» doesn't apply to them. */
+  function whoForSection() {
+    var sel = $("addItemSection");
+    var o = sel.options[sel.selectedIndex];
+    $("addItemWho").hidden = !!(o && o.getAttribute("data-role"));
+  }
+  $("addItemSection").addEventListener("change", whoForSection);
+
+  $("editOpen").addEventListener("click", function () {
+    EDIT = true;
+    render();
+  });
+  $("editDone").addEventListener("click", function () {
+    EDIT = false;
+    render();
+    toast("تمام. الربع يشوفون القائمة الجديدة.");
+  });
+
+  $("addItemForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var pin = ownerPin();
+    if (!pin) return;
+    var name = String($("addItemName").value || "").replace(/\s+/g, " ").trim().slice(0, 40);
+    if (!name) { $("addItemName").focus(); return; }
+    var btn = $("addItemBtn");
+    btn.disabled = true;
+    listCall("listAdd", [pin, $("addItemSection").value, name, $("addItemWho").value, CODE], "").then(function (res) {
+      btn.disabled = false;
+      if (res && res.ok) {
+        $("addItemName").value = "";
+        toast(res.back ? "رجعت «" + res.back + "» للكشتة." : "انضاف «" + name + "» للكشتة.");
+      }
+    });
+  });
+
+  /* «عدّل القائمة» in «إدارة الكشتة»: checks the admin code, keeps it on this phone, and opens
+     the editing. */
+  $("adminEdit").addEventListener("click", function () {
+    var pin = String($("adminPin").value || "").trim();
+    if (!pin) { $("adminPin").focus(); return; }
+    var code = CODE;
+    var b = $("adminEdit");
+    b.disabled = true;
+    call("checkPin", [pin, code]).then(function (res) {
+      b.disabled = false;
+      if (code !== CODE) return;
+      if (res && res.ok) {
+        savePin(code, pin);
+        $("adminPin").value = "";
+        $("adminBox").open = false;
+        EDIT = true;
+        render();
+        try { $("ownerBox").scrollIntoView({ block: "start", behavior: "smooth" }); } catch (e) {}
+      } else {
+        toast("الرمز غلط.");
+      }
+    }, function () {
+      b.disabled = false;
+      toast("ما قدرت أتأكد من الرمز. تأكد من النت.");
+    });
+  });
 
   /* ---------- controls ---------- */
 
@@ -1822,6 +2132,8 @@
 
   /* Clears what the last kashta left on screen until the next one loads. */
   function blank() {
+    $("ownerBox").hidden = true;
+    $("viewItems").classList.remove("editing");
     list.textContent = "";
     sharedList.textContent = "";
     $("whoList").textContent = "";
@@ -1859,6 +2171,8 @@
     CODE = code;
     KASHTA = null;
     loaded = false;
+    EDIT = false;
+    LIST = normList(null);
     SHARED = normShared(null);
     MEMBERS = [];
     PERSONAL = cached() || freshPersonal(0);
@@ -1950,8 +2264,9 @@
         newName.value = "";
         newPin.value = "";
         rememberKashta(res.kashta.code);
+        savePin(res.kashta.code, pin);
         openKashta(res.kashta.code, true);
-        toast("سويت الكشتة.");
+        toast("سويت الكشتة. تقدر تعدل أغراضها من «عدّل قائمة الكشتة».");
         return;
       }
       var why = res && res.reason;
