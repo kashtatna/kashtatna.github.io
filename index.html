@@ -572,23 +572,14 @@
   button.subtab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
   .subtab .pill { font-size: 12.5px; }
   .listbox { display: flex; flex-direction: column; gap: 26px; padding-top: 22px; }
-  #paneShared > .who-box { margin-top: 18px; }
+  #paneShared > .gap-controls { margin-top: 18px; }
+  #paneShared > .gap-note { margin: 18px 0 0; }
   #paneShared > .pending { margin-top: 22px; }
   #paneMine > .strip { margin-top: 14px; }
-
-  /* «منو راح اييبها؟» */
-  .who-box .head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-  .who-box h2 { margin: 0; }
-  .who-box > .note { margin: 0; }
-  ul.who-list { background: var(--bg); }
-  li.who-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 54px; padding: 8px 14px; }
-  li.who-row .rowtext { flex: 1 1 auto; }
-  li.who-row button.skip { margin-inline-end: 0; }
 
   /* «تقصد ...؟» */
   .name-ask { display: flex; flex-direction: column; gap: 10px; padding: 12px; border: 1.5px solid var(--accent); border-radius: 12px; }
   .name-ask p { margin: 0; font-weight: 600; }
-  button.more { flex: none; align-self: flex-start; min-height: 38px; padding: 4px 14px; font-size: 14.5px; font-weight: 600; color: var(--accent); }
 
   /* Loading gear: in the middle of the screen while the page waits for the sheet. The page's
      content stays out of sight until it is ready, then comes in softly. */
@@ -654,7 +645,7 @@
     li.edit-row button.drop, .edit-duty .q button.drop { color: #F2B8B5; border-color: rgba(242, 184, 181, .45); }
   }
   .edit-duty ul { margin: 10px 0 0; }
-  #viewItems.editing #whoBox, #viewItems.editing #notInCarBox, #viewItems.editing .strip,
+  #viewItems.editing .gap-controls, #viewItems.editing #gapNote, #viewItems.editing #notInCarBox, #viewItems.editing .strip,
   #viewItems.editing #customForm, #viewItems.editing #mineBox, #viewItems.editing #skippedBox,
   #viewItems.editing #allDone, #viewItems.editing #adminBox, #viewItems.editing #membersBox { display: none !important; }
 </style>
@@ -750,15 +741,10 @@
     </nav>
 
     <div id="paneShared" role="tabpanel" aria-labelledby="tabShared">
-      <section id="whoBox" class="card who-box" aria-live="polite">
-        <div class="head">
-          <h2>منو راح اييبها؟</h2>
-          <span class="pill" id="whoCount" hidden></span>
-        </div>
-        <ul id="whoList" class="who-list" hidden></ul>
-        <button type="button" id="whoMore" class="more" hidden></button>
-        <p class="note" id="whoNote"></p>
-      </section>
+      <div class="controls gap-controls">
+        <button type="button" id="gapBtn" aria-pressed="false" hidden>اعرض الناقص بس</button>
+      </div>
+      <p class="note gap-note" id="gapNote" hidden></p>
 
       <div id="sharedList" class="listbox"></div>
 
@@ -1354,9 +1340,11 @@
       }
     }
     if (strike) li.classList.add("done");
-    li.hidden = PERSONAL.onlyLeft && settled;
+    var hide = (PERSONAL.onlyLeft && settled) || (GAP_VIEW && need > 0 && full);
+    li.hidden = hide;
     t.rows++;
     if (settled) t.settled++;
+    if (hide) t.hidden++;
     if (counts) {
       t.total++;
       if (done) t.done++;
@@ -1386,7 +1374,7 @@
     var pill = el("span", "pill");
     head.appendChild(pill);
     var ul = el("ul");
-    var t = { total: 0, done: 0, rows: 0, settled: 0 };
+    var t = { total: 0, done: 0, rows: 0, settled: 0, hidden: 0 };
     entries.forEach(function (e) {
       var li = EDIT ? editRow(e, t) : rowEl(e.key, e.text, e.need, t, e.mineLabel, e.quiet, e.optional);
       if (!li) return;
@@ -1399,7 +1387,8 @@
     pill.hidden = t.total === 0;
     wrap.appendChild(head);
     if (t.rows) wrap.appendChild(ul);
-    wrap.hidden = (entries.length > 0 && t.rows === 0) || (PERSONAL.onlyLeft && t.settled === t.rows);
+    wrap.hidden = (entries.length > 0 && t.rows === 0) || (PERSONAL.onlyLeft && t.settled === t.rows) ||
+      (t.rows > 0 && t.hidden === t.rows);
     tally.total += t.total;
     tally.done += t.done;
     return wrap;
@@ -1484,6 +1473,7 @@
       peek.appendChild(ul);
       card.appendChild(peek);
     }
+    card.hidden = GAP_VIEW && holders.length > 0;
     return card;
   }
 
@@ -1494,59 +1484,41 @@
     return box;
   }
 
-  /* «منو راح اييبها؟»: roles nobody took, and shared items that still need someone, with «عليّ».
-     The count also shows on the «الأغراض المشتركة» tab. */
-  var whoOpen = false;
-  $("whoMore").addEventListener("click", function () {
-    whoOpen = !whoOpen;
+  /* «اعرض الناقص بس»: the shared tab shows only what still needs someone, in the list itself:
+     roles nobody took, and items with fewer people on them than they need. The list is still
+     built whole (so what you carry and what is not in a car yet keep counting) and the rest is
+     only hidden. Every visit starts with the full list. */
+  var GAPS_ONLY = false;
+  var GAP_VIEW = false;
+  $("gapBtn").addEventListener("click", function () {
+    GAPS_ONLY = !GAPS_ONLY;
     render();
   });
-  function renderWho(roles, sections) {
-    var gaps = [];
-    roles.forEach(function (sec) {
-      var key = ROLE + SEP + sec.name;
-      if (!(SHARED.claims[key] || []).length) gaps.push({ key: key, text: sec.name, sub: "مسؤولية", mine: false });
-    });
+  function isGap(key, need) {
+    return need > 0 && (SHARED.claims[key] || []).length < need;
+  }
+  function countGaps(roles, sections) {
+    var n = 0;
+    roles.forEach(function (sec) { if (isGap(ROLE + SEP + sec.name, 1)) n++; });
     sections.forEach(function (sec) {
-      sec.items.forEach(function (it) {
-        if (!(it.need > 0)) return;
-        var key = sec.name + SEP + it.name;
-        var holders = SHARED.claims[key] || [];
-        if (holders.length >= it.need) return;
-        var mine = holders.indexOf(ME) >= 0;
-        var sub = sec.name + (it.need >= 2 ? (holders.length ? (mine ? "، عليك ويبي واحد بعد" : "، يبي واحد بعد") : "، يكفي اثنين") : "");
-        gaps.push({ key: key, text: it.name, sub: sub, mine: mine });
-      });
+      sec.items.forEach(function (it) { if (isGap(sec.name + SEP + it.name, it.need)) n++; });
     });
-    var ul = $("whoList");
-    ul.textContent = "";
-    var LIMIT = 5;
-    gaps.forEach(function (g, i) {
-      var li = el("li", "who-row");
-      li.hidden = !whoOpen && i >= LIMIT;
-      var body = el("span", "rowtext");
-      body.appendChild(el("span", "txt", g.text));
-      body.appendChild(el("span", "who", g.sub));
-      li.appendChild(body);
-      if (!g.mine) {
-        var b = el("button", "skip", "عليّ");
-        b.type = "button";
-        b.setAttribute("aria-label", "أنا بييب " + g.text);
-        b.addEventListener("click", function () { toggleClaim(g.key, false); });
-        li.appendChild(b);
-      }
-      ul.appendChild(li);
-    });
-    ul.hidden = gaps.length === 0;
-    var more = $("whoMore");
-    more.hidden = gaps.length <= LIMIT;
-    more.textContent = whoOpen ? "اعرض أقل" : "اعرض الباقي (" + (gaps.length - LIMIT) + ")";
-    $("whoCount").textContent = String(gaps.length);
-    $("whoCount").hidden = gaps.length === 0;
-    $("whoNote").textContent = gaps.length ? "" : "كل الأغراض المشتركة والمسؤوليات لها أحد.";
-    $("whoNote").hidden = gaps.length > 0;
-    $("sharedBadge").textContent = String(gaps.length);
-    $("sharedBadge").hidden = gaps.length === 0;
+    return n;
+  }
+  /* The count on the tab and on the button; when everything has someone, a line says so. */
+  function renderGapBar(n) {
+    var btn = $("gapBtn");
+    btn.hidden = n === 0;
+    btn.setAttribute("aria-pressed", GAPS_ONLY ? "true" : "false");
+    btn.textContent = "اعرض الناقص بس (" + n + ")";
+    $("gapNote").textContent = n ? "" : "كل الأغراض المشتركة والمسؤوليات لها أحد.";
+    $("gapNote").hidden = n > 0;
+    $("sharedBadge").textContent = String(n);
+    $("sharedBadge").hidden = n === 0;
+  }
+  /* While only the missing show, a block with nothing missing left in it goes too. */
+  function hideIfDone(block, selector) {
+    block.hidden = GAP_VIEW && !block.querySelector(selector);
   }
 
   function render() {
@@ -1565,6 +1537,9 @@
     var gear = CATALOG.filter(function (s) { return s.kind === "gear"; });
     var roleNames = roles.map(function (s) { return s.name; });
     var looseExtras = extras.filter(function (s) { return roleNames.indexOf(s.parent) < 0; });
+    var gaps = countGaps(roles, foods.concat(gear).concat(looseExtras.filter(function (s) { return SHARED.extras.indexOf(s.name) >= 0; })));
+    if (!gaps) GAPS_ONLY = false;
+    GAP_VIEW = GAPS_ONLY && !EDIT;
 
     if (roles.length) {
       var rb = el("section", "block");
@@ -1572,6 +1547,7 @@
       roles.forEach(function (sec) {
         rb.appendChild(roleCard(sec, tally, extras.filter(function (k) { return k.parent === sec.name; })));
       });
+      hideIfDone(rb, ":scope > .duty:not([hidden])");
       sharedList.appendChild(rb);
     }
 
@@ -1596,8 +1572,10 @@
         looseExtras.forEach(function (sec) {
           if (SHARED.extras.indexOf(sec.name) >= 0) ex.appendChild(groupEl(sec.name, "h3", entriesOf(sec), tally));
         });
+        ex.hidden = GAP_VIEW;
         fb.appendChild(ex);
       }
+      hideIfDone(fb, ":scope > section.group:not([hidden])");
       sharedList.appendChild(fb);
     }
 
@@ -1612,6 +1590,7 @@
       anyShared = true;
       gb.appendChild(groupEl(sec.name, "h2", shared, tally));
     });
+    hideIfDone(gb, ":scope > section.group:not([hidden])");
     if (anyShared) sharedList.appendChild(gb);
     list.appendChild(el("p", "note", "كل واحد اييب حق نفسه. أشّر على الغرض أول ما تحطه بالسيارة."));
     gear.forEach(function (sec) {
@@ -1619,7 +1598,7 @@
       if (own.length) list.appendChild(groupEl(sec.name, "h2", own, tally));
     });
 
-    renderWho(roles, foods.concat(gear).concat(looseExtras.filter(function (s) { return SHARED.extras.indexOf(s.name) >= 0; })));
+    renderGapBar(gaps);
 
     if (!EDIT) renderCustom(tally);
     renderMine(tally);
@@ -2136,12 +2115,9 @@
     $("viewItems").classList.remove("editing");
     list.textContent = "";
     sharedList.textContent = "";
-    $("whoList").textContent = "";
-    $("whoList").hidden = true;
-    $("whoMore").hidden = true;
-    whoOpen = false;
-    $("whoCount").hidden = true;
-    $("whoNote").textContent = "";
+    GAPS_ONLY = false;
+    $("gapBtn").hidden = true;
+    $("gapNote").hidden = true;
     $("sharedBadge").hidden = true;
     $("mineBox").textContent = "";
     $("notInCarBox").hidden = true;
